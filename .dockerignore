@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Build artifacts (rebuild in container)
+dist/
+
+# Development files
+.git/
+.github/
+.vscode/
+.cursor/
+.gemini/
+
+# Test files (not needed in production)
+tests/
+coverage/
+*.test.ts
+*.spec.ts
+vitest.config.ts
+
+# Documentation (not needed in runtime)
+docs/
+*.md
+!README.md
+
+# Development scripts
+test-*.js
+scan.*
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Temporary files
+tmp/
+temp/
+*.tmp

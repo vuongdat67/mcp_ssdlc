@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # MCP SSDLC Server - Development mode
+  ssdlc-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./src:/app/src:ro
+      - ./domains:/app/domains:ro
+      - ./dist:/app/dist
+    command: pnpm dev
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+
+  # MCP SSDLC Server - Production mode
+  ssdlc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mcp-ssdlc-toolkit:latest
+    volumes:
+      - ./domains:/app/domains:ro  # Allow custom domains
+    environment:
+      - NODE_ENV=production
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  # Test runner
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./coverage:/app/coverage
+    command: pnpm test -- --run --coverage
+    environment:
+      - NODE_ENV=test
+
+# Named volumes for persistence (if needed in future)
+volumes:
+  domains:

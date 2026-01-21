@@ -1,0 +1,13 @@
+regulations:
+  - name: "OWASP"
+    fullName: "OWASP ASVS"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to OWASP ASVS"
+  - name: "NIST"
+    fullName: "NIST SP 800-53"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to NIST SP 800-53"

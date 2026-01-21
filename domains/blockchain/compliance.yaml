@@ -1,0 +1,13 @@
+regulations:
+  - name: "SWC"
+    fullName: "SWC Registry"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to SWC Registry"
+  - name: "Smart"
+    fullName: "Smart Contract Security Verification Standard (SCSVS)"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to Smart Contract Security Verification Standard (SCSVS)"

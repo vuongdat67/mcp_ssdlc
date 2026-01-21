@@ -1,0 +1,52 @@
+# Healthcare Domain
+keywords:
+  - patient
+  - medical
+  - health
+  - hospital
+  - clinic
+  - doctor
+  - nurse
+  - PHI
+  - HIPAA
+  - HL7
+  - FHIR
+
+stakeholders:
+  - name: Patient
+    type: end_user
+    data_access: own_records
+  - name: Healthcare Provider
+    type: professional
+    data_access: assigned_patients
+  - name: Admin Staff
+    type: internal
+    data_access: scheduling
+  - name: Compliance Officer
+    type: governance
+    data_access: audit_logs
+
+sensitive_data:
+  - type: PHI
+    level: critical
+    encryption: required
+  - type: Medical Records
+    level: critical
+    encryption: required
+  - type: Appointment Data
+    level: medium
+    encryption: recommended
+
+data_classification:
+  critical:
+    - Patient ID
+    - Medical history
+    - Diagnosis
+    - Prescriptions
+    - Lab results
+  high:
+    - Contact info
+    - Insurance details
+  medium:
+    - Appointment times
+    - Provider assignments

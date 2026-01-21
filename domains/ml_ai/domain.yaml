@@ -1,0 +1,41 @@
+name: "AI/ML & Data Science"
+description: "Security resources and guidance for AI/ML & Data Science"
+keywords:
+  - "machine learning"
+  - "artificial intelligence"
+  - "deep learning"
+  - "federated learning"
+  - "cfg"
+  - "dfg"
+  - "model training"
+  - "adversarial"
+knowledge_base:
+  - "NIST AI RMF"
+  - "Adversarial ML Threat Matrix"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "OWASP AI Security Top 10"
+  - "ISO/IEC 42001"
+stakeholders:
+  - name: "Data Scientist"
+    type: "internal"
+    dataAccess: "datasets"
+  - name: "ML Engineer"
+    type: "internal"
+    dataAccess: "models"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

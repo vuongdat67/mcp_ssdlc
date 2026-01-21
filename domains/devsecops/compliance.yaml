@@ -1,0 +1,13 @@
+regulations:
+  - name: "OpenSSF"
+    fullName: "OpenSSF Compliance"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to OpenSSF Compliance"
+  - name: "SLSA"
+    fullName: "SLSA"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to SLSA"

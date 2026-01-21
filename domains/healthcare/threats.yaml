@@ -1,0 +1,42 @@
+# Healthcare Domain-Specific Threats
+threats:
+  - id: HC-T1
+    category: Spoofing
+    name: Patient Impersonation
+    description: Attacker poses as patient to access medical records
+    likelihood: high
+    impact: critical
+    mitigation: MFA, identity verification
+
+  - id: HC-T2
+    category: Information Disclosure
+    name: PHI Data Breach
+    description: Unauthorized access to Protected Health Information
+    likelihood: medium
+    impact: critical
+    mitigation: Encryption, access controls, audit logging
+    compliance_impact: HIPAA breach notification required
+
+  - id: HC-T3
+    category: Tampering
+    name: Medical Record Modification
+    description: Unauthorized changes to patient medical records
+    likelihood: medium
+    impact: critical
+    mitigation: Digital signatures, change tracking, RBAC
+
+  - id: HC-T4
+    category: Repudiation
+    name: Treatment Denial
+    description: Provider denies providing treatment
+    likelihood: low
+    impact: high
+    mitigation: Comprehensive audit logging, timestamps
+
+  - id: HC-T5
+    category: Information Disclosure
+    name: Lab Results Leak
+    description: Unauthorized access to lab test results
+    likelihood: medium
+    impact: high
+    mitigation: End-to-end encryption for FHIR integration

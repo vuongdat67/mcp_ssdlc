@@ -1,0 +1,37 @@
+name: "DevSecOps"
+description: "Security resources and guidance for DevSecOps"
+keywords:
+  - "devsecops"
+  - "security pipeline"
+  - "shift left"
+  - "automated security"
+  - "dependency check"
+  - "trivy"
+  - "snyk"
+knowledge_base:
+  - "DevSecOps Manifesto"
+  - "DoD DevSecOps Reference Design"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "OpenSSF Compliance"
+  - "SLSA"
+stakeholders:
+  - name: "DevSecOps Lead"
+    type: "professional"
+    dataAccess: "all"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

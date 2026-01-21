@@ -1,0 +1,38 @@
+name: "Reverse Engineering"
+description: "Security resources and guidance for Reverse Engineering"
+keywords:
+  - "reverse engineering"
+  - "ghidra"
+  - "ida pro"
+  - "disassembly"
+  - "decompilation"
+  - "binary analysis"
+  - "analyzing malware"
+  - "firmware analysis"
+knowledge_base:
+  - "Practical Reverse Engineering"
+  - "Reversing: Secrets of Reverse Engineering"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "Legal guidelines on RE"
+  - "DMCA exemptions"
+stakeholders:
+  - name: "Reverse Engineer"
+    type: "professional"
+    dataAccess: "binaries"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

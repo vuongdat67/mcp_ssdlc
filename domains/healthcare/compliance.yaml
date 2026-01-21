@@ -1,0 +1,35 @@
+# Healthcare Compliance Requirements
+regulations:
+  - name: HIPAA
+    full_name: Health Insurance Portability and Accountability Act
+    requirements:
+      - id: "164.312(a)"
+        name: Access Control
+        description: Implement technical policies for electronic PHI access
+      - id: "164.312(b)"
+        name: Audit Controls
+        description: Hardware/software recording and examination
+      - id: "164.312(c)"
+        name: Integrity
+        description: Protect PHI from improper alteration
+      - id: "164.312(d)"
+        name: Authentication
+        description: Verify identity of person seeking access
+      - id: "164.312(e)"
+        name: Transmission Security
+        description: Guard against unauthorized access during transmission
+
+  - name: HITECH
+    full_name: Health Information Technology for Economic and Clinical Health
+    requirements:
+      - id: breach_notification
+        name: Breach Notification
+        description: Notify affected individuals within 60 days
+
+audit_requirements:
+  retention_years: 7
+  must_log:
+    - PHI access
+    - PHI modification
+    - User authentication
+    - Failed access attempts

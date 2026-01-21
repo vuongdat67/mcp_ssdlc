@@ -1,0 +1,13 @@
+regulations:
+  - name: "Legal"
+    fullName: "Legal guidelines on RE"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to Legal guidelines on RE"
+  - name: "DMCA"
+    fullName: "DMCA exemptions"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to DMCA exemptions"

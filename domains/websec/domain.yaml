@@ -1,0 +1,43 @@
+name: "Web Security"
+description: "Security resources and guidance for Web Security"
+keywords:
+  - "web security"
+  - "webapp"
+  - "xss"
+  - "csrf"
+  - "sqli"
+  - "owasp"
+  - "csp"
+  - "cors"
+  - "hsts"
+  - "content security policy"
+knowledge_base:
+  - "OWASP Testing Guide"
+  - "Web Application Hacker's Handbook"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "OWASP Top 10"
+  - "WASC Threat Classification"
+stakeholders:
+  - name: "Web Developer"
+    type: "internal"
+    dataAccess: "code"
+  - name: "Penetration Tester"
+    type: "external"
+    dataAccess: "application"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

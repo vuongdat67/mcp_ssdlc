@@ -1,0 +1,13 @@
+regulations:
+  - name: "PCI-DSS"
+    fullName: "PCI-DSS (Network)"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to PCI-DSS (Network)"
+  - name: "NIST"
+    fullName: "NIST SP 800-41"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to NIST SP 800-41"

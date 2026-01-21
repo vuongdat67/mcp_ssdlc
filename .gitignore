@@ -1,0 +1,10 @@
+bin/
+.cursor/
+.github/copilot-instructions.md
+dist/
+node_modules/
+.gemini/
+.vscode/
+scan.txt
+scan.py
+pycache/

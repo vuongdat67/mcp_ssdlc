@@ -1,0 +1,13 @@
+regulations:
+  - name: "OWASP"
+    fullName: "OWASP AI Security Top 10"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to OWASP AI Security Top 10"
+  - name: "ISO/IEC"
+    fullName: "ISO/IEC 42001"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to ISO/IEC 42001"

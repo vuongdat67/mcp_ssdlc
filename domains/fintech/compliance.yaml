@@ -1,0 +1,27 @@
+# Fintech Compliance Requirements
+regulations:
+  - name: PCI-DSS
+    full_name: Payment Card Industry Data Security Standard
+    requirements:
+      - id: "1"
+        name: Firewall Configuration
+        description: Install and maintain firewall to protect cardholder data
+      - id: "3"
+        name: Protect Stored Data
+        description: Protect stored cardholder data
+      - id: "4"
+        name: Encrypt Transmission
+        description: Encrypt transmission of cardholder data
+      - id: "8"
+        name: Unique IDs
+        description: Assign unique ID to each person with computer access
+
+  - name: SOX
+    full_name: Sarbanes-Oxley Act
+    requirements:
+      - id: "302"
+        name: Financial Reporting
+        description: Executive certification of financial reports
+      - id: "404"
+        name: Internal Controls
+        description: Assessment of internal control structure

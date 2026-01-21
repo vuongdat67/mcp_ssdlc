@@ -1,0 +1,42 @@
+name: "Blockchain & Smart Contracts"
+description: "Security resources and guidance for Blockchain & Smart Contracts"
+keywords:
+  - "blockchain"
+  - "smart contract"
+  - "solidity"
+  - "ethereum"
+  - "web3"
+  - "defi"
+  - "crypto"
+  - "consensus"
+  - "distributed ledger"
+knowledge_base:
+  - "Ethereum Yellow Paper"
+  - "Mastering Bitcoin"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "SWC Registry"
+  - "Smart Contract Security Verification Standard (SCSVS)"
+stakeholders:
+  - name: "Smart Contract Dev"
+    type: "internal"
+    dataAccess: "contracts"
+  - name: "Auditor"
+    type: "external"
+    dataAccess: "contracts"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

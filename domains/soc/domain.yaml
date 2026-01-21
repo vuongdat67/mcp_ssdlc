@@ -1,0 +1,43 @@
+name: "Security Operations (SOC)"
+description: "Security resources and guidance for Security Operations (SOC)"
+keywords:
+  - "soc"
+  - "siem"
+  - "soar"
+  - "incident response"
+  - "log analysis"
+  - "splunk"
+  - "elastic"
+  - "threat hunting"
+  - "endpoint detection"
+  - "edr"
+knowledge_base:
+  - "Blue Team Handbook"
+  - "NIST Incident Response Cycle"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "NIST SP 800-61"
+  - "ISO 27035"
+stakeholders:
+  - name: "SOC Analyst"
+    type: "professional"
+    dataAccess: "logs"
+  - name: "SOC Manager"
+    type: "internal"
+    dataAccess: "reports"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

@@ -1,0 +1,37 @@
+# Generic Domain (Fallback)
+keywords: []  # Matches any project
+
+stakeholders:
+  - name: End User
+    type: end_user
+    data_access: own_data
+  - name: Admin
+    type: internal
+    data_access: all
+  - name: Developer
+    type: internal
+    data_access: system
+
+sensitive_data:
+  - type: User Credentials
+    level: critical
+    encryption: required
+  - type: Personal Data
+    level: high
+    encryption: recommended
+  - type: Business Data
+    level: medium
+    encryption: optional
+
+data_classification:
+  critical:
+    - Passwords
+    - API keys
+    - Secret tokens
+  high:
+    - PII
+    - Email
+    - Phone
+  medium:
+    - Preferences
+    - Activity logs

@@ -1,0 +1,34 @@
+# Fintech Threats
+threats:
+  - id: FT-T1
+    category: Spoofing
+    name: Account Takeover
+    description: Attacker gains unauthorized access to user account
+    likelihood: high
+    impact: critical
+    mitigation: MFA, device fingerprinting, behavioral analysis
+
+  - id: FT-T2
+    category: Tampering
+    name: Transaction Fraud
+    description: Unauthorized or modified transactions
+    likelihood: high
+    impact: critical
+    mitigation: Transaction signing, velocity checks, fraud detection
+
+  - id: FT-T3
+    category: Information Disclosure
+    name: Card Data Breach
+    description: Exposure of payment card information
+    likelihood: medium
+    impact: critical
+    mitigation: Tokenization, encryption, PCI compliance
+    compliance_impact: PCI-DSS breach notification
+
+  - id: FT-T4
+    category: Denial of Service
+    name: Payment System Outage
+    description: Disruption of payment processing
+    likelihood: medium
+    impact: high
+    mitigation: DDoS protection, redundancy, failover

@@ -1,0 +1,13 @@
+regulations:
+  - name: "NIST"
+    fullName: "NIST SP 800-61"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to NIST SP 800-61"
+  - name: "ISO"
+    fullName: "ISO 27035"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to ISO 27035"

@@ -1,0 +1,41 @@
+name: "Application Security"
+description: "Security resources and guidance for Application Security"
+keywords:
+  - "appsec"
+  - "sast"
+  - "dast"
+  - "penetration testing"
+  - "secure coding"
+  - "code review"
+  - "vulnerability management"
+knowledge_base:
+  - "OWASP Top 10"
+  - "CWE Top 25"
+  - "ASVS"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "OWASP ASVS"
+  - "NIST SP 800-53"
+stakeholders:
+  - name: "Security Engineer"
+    type: "professional"
+    dataAccess: "full"
+  - name: "Developer"
+    type: "internal"
+    dataAccess: "code"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

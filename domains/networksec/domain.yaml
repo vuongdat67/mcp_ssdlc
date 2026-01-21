@@ -1,0 +1,42 @@
+name: "Network Security (IDS/IPS)"
+description: "Security resources and guidance for Network Security (IDS/IPS)"
+keywords:
+  - "network security"
+  - "ids"
+  - "ips"
+  - "firewall"
+  - "pcap"
+  - "packet analysis"
+  - "deep packet inspection"
+  - "dpi"
+  - "network forensics"
+knowledge_base:
+  - "TCP/IP Illustrated"
+  - "Snort Manual"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "PCI-DSS (Network)"
+  - "NIST SP 800-41"
+stakeholders:
+  - name: "Network Admin"
+    type: "internal"
+    dataAccess: "traffic_logs"
+  - name: "Security Analyst"
+    type: "professional"
+    dataAccess: "alerts"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

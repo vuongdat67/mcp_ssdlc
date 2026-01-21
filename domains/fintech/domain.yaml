@@ -1,0 +1,49 @@
+# Fintech Domain
+keywords:
+  - bank
+  - payment
+  - transaction
+  - finance
+  - money
+  - trading
+  - invest
+  - PCI
+  - credit
+  - debit
+
+stakeholders:
+  - name: Customer
+    type: end_user
+    data_access: own_accounts
+  - name: Merchant
+    type: business_partner
+    data_access: transaction_reports
+  - name: Compliance Team
+    type: governance
+    data_access: audit_logs
+
+sensitive_data:
+  - type: Card Data
+    level: critical
+    encryption: required
+    pci_scope: true
+  - type: Account Balance
+    level: high
+    encryption: required
+  - type: Transaction History
+    level: high
+    encryption: recommended
+
+data_classification:
+  critical:
+    - PAN (Card Number)
+    - CVV/CVC
+    - PIN
+    - Account credentials
+  high:
+    - Account balance
+    - Transaction history
+    - Personal info
+  medium:
+    - Transaction metadata
+    - Merchant info

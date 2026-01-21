@@ -1,0 +1,41 @@
+name: "DevOps & Infrastructure"
+description: "Security resources and guidance for DevOps & Infrastructure"
+keywords:
+  - "devops"
+  - "ci/cd"
+  - "docker"
+  - "kubernetes"
+  - "terraform"
+  - "ansible"
+  - "infrastructure as code"
+  - "iac"
+knowledge_base:
+  - "The DevOps Handbook"
+  - "SRE Workbook"
+architecture_patterns:
+  - "Secure by Design"
+  - "Defense in Depth"
+security_standards:
+  - "CIS Benchmarks"
+  - "NIST SP 800-190 (Containers)"
+stakeholders:
+  - name: "DevOps Engineer"
+    type: "professional"
+    dataAccess: "infrastructure"
+  - name: "SRE"
+    type: "professional"
+    dataAccess: "infrastructure"
+sensitiveData:
+  - type: "Credentials"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Secrets"
+    - "PII"
+  high:
+    - "Configuration"
+  medium:
+    - "Internal Docs"
+  low:
+    - "Public Data"

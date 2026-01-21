@@ -1,0 +1,52 @@
+name: "Secure Communication & Cryptography"
+description: "Guidance for E2EE, Signal Protocol, and Secure Messaging"
+keywords:
+  - "chat"
+  - "messaging"
+  - "e2ee"
+  - "end-to-end encryption"
+  - "signal protocol"
+  - "cryptography"
+  - "secure communication"
+  - "pki"
+  - "encryption"
+  - "decrypt"
+knowledge_base:
+  - "Signal Protocol Documentation"
+  - "NIST Cryptographic Standards"
+  - "RFC 7516 (JWE)"
+architecture_patterns:
+  - "Double Ratchet"
+  - "Zero Knowledge Architecture"
+  - "Forward Secrecy"
+  - "X3DH Key Agreement"
+  - "Sesame Algorithm"
+  - "Distributed PreKeys"
+  - "Offline Messaging"
+security_standards:
+  - "FIPS 140-3"
+  - "NIST SP 800-175B"
+stakeholders:
+  - name: "Cryptographer"
+    type: "professional"
+    dataAccess: "keys"
+  - name: "Security Architect"
+    type: "internal"
+    dataAccess: "design"
+sensitiveData:
+  - type: "Private Keys"
+    level: "critical"
+    encryption: "required"
+  - type: "Message Content"
+    level: "critical"
+    encryption: "required"
+dataClassification:
+  critical:
+    - "Private Keys"
+    - "Session Keys"
+  high:
+    - "Metadata"
+  medium:
+    - "Public Keys"
+  low:
+    - "Public Profiles"

@@ -1,0 +1,13 @@
+regulations:
+  - name: "CIS"
+    fullName: "CIS Benchmarks"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to CIS Benchmarks"
+  - name: "NIST"
+    fullName: "NIST SP 800-190 (Containers)"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to NIST SP 800-190 (Containers)"

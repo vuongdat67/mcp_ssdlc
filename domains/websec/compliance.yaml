@@ -1,0 +1,13 @@
+regulations:
+  - name: "OWASP"
+    fullName: "OWASP Top 10"
+    requirements:
+      - id: "REQ-1"
+        name: "Compliance Rule"
+        description: "Must adhere to OWASP Top 10"
+  - name: "WASC"
+    fullName: "WASC Threat Classification"
+    requirements:
+      - id: "REQ-2"
+        name: "Compliance Rule"
+        description: "Must adhere to WASC Threat Classification"

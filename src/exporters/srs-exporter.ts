@@ -177,9 +177,39 @@ export function generateSRS(output: PipelineOutput): string {
     lines.push(phases.techLead.architectureDiagram);
     lines.push('');
 
+    // 4.1.1 Data Flow Diagrams
+    if (phases.techLead.dataFlowDiagrams) {
+        lines.push('#### 4.1.1 Data Flow Diagrams');
+        lines.push('');
+        
+        lines.push('**DFD Level 0 - Context Diagram**');
+        lines.push('');
+        lines.push(phases.techLead.dataFlowDiagrams.level0);
+        lines.push('');
+        
+        lines.push('**DFD Level 1 - Major Processes**');
+        lines.push('');
+        lines.push(phases.techLead.dataFlowDiagrams.level1);
+        lines.push('');
+        
+        lines.push('**DFD Level 2 - Process Decomposition**');
+        lines.push('');
+        lines.push(phases.techLead.dataFlowDiagrams.level2);
+        lines.push('');
+    }
+
     // 4.2 Data Design
     lines.push('### 4.2 Data Design & Schema');
     lines.push('');
+    
+    // 4.2.1 Entity Relationship Diagram
+    if (phases.techLead.entityRelationshipDiagram) {
+        lines.push('#### Entity Relationship Diagram');
+        lines.push('');
+        lines.push(phases.techLead.entityRelationshipDiagram);
+        lines.push('');
+    }
+    
     lines.push('#### Core Entities');
     lines.push('| Entity | Key Fields | Description |');
     lines.push('|--------|-----------|-------------|');

@@ -6,7 +6,12 @@ import { generatePseudocode, type PseudocodeLanguage } from './pseudocode-genera
 import { generateArchitectureDiagram, generateComponentDiagram } from './architecture-diagram.js';
 import { generateProjectStructure } from './scaffold-structure.js';
 import { generateDesignPatterns } from './design-patterns.js';
+import { generateDataFlowDiagrams, generateEntityRelationshipDiagram } from './diagram-generators.js';
 import type { TechLeadOutput, FileStructure } from '../../types/tech-lead.js';
+
+// Export diagram generators for external use
+export { generateDataFlowDiagrams, generateEntityRelationshipDiagram } from './diagram-generators.js';
+export type { DFDInput, DFDOutput, ERDInput, ERDOutput } from './diagram-generators.js';
 
 export interface TechLeadInput {
     userStories: UserStory[];
@@ -49,6 +54,15 @@ export async function techLeadDesign(input: TechLeadInput): Promise<TechLeadOutp
     // Step 7: Generate design patterns
     const designPatterns = generateDesignPatterns(domainName);
 
+    // Step 8: Generate data flow diagrams (DFD Level 0, 1, 2)
+    const dataFlowDiagrams = generateDataFlowDiagrams({
+        modules,
+        features
+    });
+
+    // Step 9: Generate entity relationship diagram (ERD)
+    const erdOutput = generateEntityRelationshipDiagram({ modules });
+
     return {
         features,
         flows,
@@ -56,7 +70,9 @@ export async function techLeadDesign(input: TechLeadInput): Promise<TechLeadOutp
         pseudocode,
         architectureDiagram,
         fileStructure,
-        designPatterns
+        designPatterns,
+        dataFlowDiagrams,
+        entityRelationshipDiagram: erdOutput.diagram
     };
 }
 

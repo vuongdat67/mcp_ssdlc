@@ -102,4 +102,10 @@ export interface TechLeadOutput {
     architectureDiagram: string;
     fileStructure: FileStructure[];
     designPatterns: DesignPattern[];
+    dataFlowDiagrams?: {
+        level0: string;
+        level1: string;
+        level2: string;
+    };
+    entityRelationshipDiagram?: string;
 }

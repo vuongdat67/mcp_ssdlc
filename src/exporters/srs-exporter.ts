@@ -1268,7 +1268,7 @@ function generateTimeline(features: any[]): string {
     lines.push('    Architecture Design      :done, plan2, after plan1, 1w');
     lines.push('    section Development');
     
-    let currentDate = new Date('2024-01-15');
+    const currentDate = new Date('2024-01-15');
     features.slice(0, 4).forEach((feat, idx) => {
         const sprintNum = Math.floor(idx / 2) + 1;
         const startDate = new Date(currentDate);

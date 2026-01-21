@@ -15,6 +15,18 @@ import { designTestStrategy } from './tools/qa/index.js';
 import { designCICD } from './tools/devops/index.js';
 import { orchestratePipeline, type PipelineInput } from './orchestrator/index.js';
 import { toJSON, toYAML, toMarkdown } from './exporters/index.js';
+import {
+    generateWorkspaceSnapshot,
+    runPlaybook,
+    runDiagnostics,
+    parseErrorLog,
+    getLastKnownGood
+} from './tools/diagnostics/index.js';
+import {
+    analyzeCodeSecurity,
+    generateCodingGuidelines,
+    getSecureTemplate
+} from './tools/coding/index.js';
 
 export const VERSION = '2.0.0';
 
@@ -155,6 +167,110 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                     required: ['project_description', 'business_goals', 'tech_stack'],
                 },
             },
+
+            // Dev Diagnostics Tools
+            {
+                name: 'workspace_snapshot',
+                description: 'Generate a snapshot of the workspace structure (file tree with .gitignore filtering)',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        root_path: { type: 'string', description: 'Root directory to scan' },
+                        max_depth: { type: 'number', description: 'Maximum depth to scan (default: 5)' },
+                    },
+                    required: ['root_path'],
+                },
+            },
+            {
+                name: 'run_diagnostic_playbook',
+                description: 'Run a diagnostic playbook to check/fix environment issues',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        playbook: {
+                            type: 'string',
+                            enum: ['check_node', 'check_msvc', 'check_cmake', 'check_git', 'check_env', 'fix_node_modules', 'clean_build'],
+                            description: 'Playbook to run'
+                        },
+                        workspace_root: { type: 'string', description: 'Workspace root directory' },
+                    },
+                    required: ['playbook', 'workspace_root'],
+                },
+            },
+            {
+                name: 'run_environment_diagnostics',
+                description: 'Run diagnostics to check development environment (Node, Git, build tools)',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        workspace_root: { type: 'string', description: 'Workspace root directory' },
+                    },
+                    required: ['workspace_root'],
+                },
+            },
+            {
+                name: 'parse_error_log',
+                description: 'Parse error log to extract issues and suggestions',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        log_content: { type: 'string', description: 'Error log content to parse' },
+                        log_type: { type: 'string', enum: ['build', 'test', 'generic'], description: 'Type of log' },
+                    },
+                    required: ['log_content'],
+                },
+            },
+            {
+                name: 'get_last_known_good',
+                description: 'Get last known good configuration that worked',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        workspace_root: { type: 'string', description: 'Workspace root directory' },
+                    },
+                    required: ['workspace_root'],
+                },
+            },
+
+            // Coding Assistant Tools
+            {
+                name: 'analyze_code_security',
+                description: 'Analyze code for security issues and vulnerabilities',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        code: { type: 'string', description: 'Code to analyze' },
+                        language: { type: 'string', enum: ['typescript', 'javascript', 'python', 'java'], description: 'Programming language' },
+                        domain: { type: 'string', description: 'Domain context (healthcare, fintech, etc.)' },
+                    },
+                    required: ['code', 'language'],
+                },
+            },
+            {
+                name: 'get_coding_guidelines',
+                description: 'Get coding guidelines and security rules for a domain',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        domain: { type: 'string', description: 'Domain name' },
+                        language: { type: 'string', enum: ['typescript', 'javascript', 'python', 'java'], description: 'Programming language' },
+                    },
+                    required: ['domain', 'language'],
+                },
+            },
+            {
+                name: 'get_secure_template',
+                description: 'Get a secure code template for a feature type',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        feature_type: { type: 'string', enum: ['authentication', 'api_endpoint', 'database', 'generic'] },
+                        language: { type: 'string', enum: ['typescript', 'javascript', 'python', 'java'] },
+                        domain: { type: 'string', description: 'Domain context' },
+                    },
+                    required: ['feature_type', 'language'],
+                },
+            },
         ],
     };
 });
@@ -256,6 +372,89 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     complianceRequirements: typedArgs.compliance_requirements
                 };
                 result = await orchestratePipeline(pipelineInput);
+                break;
+            }
+
+            // Dev Diagnostics Tools
+            case 'workspace_snapshot': {
+                const typedArgs = args as any;
+                result = generateWorkspaceSnapshot(
+                    typedArgs.root_path,
+                    typedArgs.max_depth || 5
+                );
+                break;
+            }
+
+            case 'run_diagnostic_playbook': {
+                const typedArgs = args as any;
+                result = runPlaybook(
+                    typedArgs.playbook,
+                    typedArgs.workspace_root
+                );
+                break;
+            }
+
+            case 'run_environment_diagnostics': {
+                const typedArgs = args as any;
+                result = runDiagnostics(typedArgs.workspace_root);
+                break;
+            }
+
+            case 'parse_error_log': {
+                const typedArgs = args as any;
+                result = parseErrorLog(
+                    typedArgs.log_content,
+                    typedArgs.log_type || 'generic'
+                );
+                break;
+            }
+
+            case 'get_last_known_good': {
+                const typedArgs = args as any;
+                result = getLastKnownGood(typedArgs.workspace_root);
+                break;
+            }
+
+            // Coding Assistant Tools
+            case 'analyze_code_security': {
+                const typedArgs = args as any;
+                let domain;
+                if (typedArgs.domain) {
+                    domain = await loadDomain(typedArgs.domain);
+                }
+                result = analyzeCodeSecurity(
+                    typedArgs.code,
+                    typedArgs.language,
+                    domain
+                );
+                break;
+            }
+
+            case 'get_coding_guidelines': {
+                const typedArgs = args as any;
+                const domain = await loadDomain(typedArgs.domain);
+                result = generateCodingGuidelines(domain, typedArgs.language);
+                break;
+            }
+
+            case 'get_secure_template': {
+                const typedArgs = args as any;
+                const feature = {
+                    id: 'F-001',
+                    name: typedArgs.feature_type,
+                    priority: 'P0' as const,
+                    description: `${typedArgs.feature_type} feature`,
+                    dependencies: [],
+                    subFeatures: [],
+                    acceptanceCriteria: [],
+                    technicalNotes: '',
+                    securityConsiderations: []
+                };
+                let domain;
+                if (typedArgs.domain) {
+                    domain = await loadDomain(typedArgs.domain);
+                }
+                result = getSecureTemplate(feature, typedArgs.language, domain);
                 break;
             }
 

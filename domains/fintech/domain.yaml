@@ -47,3 +47,62 @@ data_classification:
   medium:
     - Transaction metadata
     - Merchant info
+  low:
+    - Public product catalog
+
+# Extended schema fields
+domain_specific_requirements:
+  - "MUST comply with PCI DSS 4.0 for card processing"
+  - "MUST implement 3D Secure 2.0 for SCA compliance"
+  - "MUST perform KYC (Know Your Customer) verification"
+  - "MUST implement AML (Anti-Money Laundering) monitoring"
+  - "MUST support real-time fraud detection"
+  - "SHOULD support multi-currency wallets"
+
+technical_constraints:
+  - type: "latency"
+    description: "Payment authorization response"
+    threshold: "<2 seconds p95"
+  - type: "availability"
+    description: "Payment gateway uptime"
+    threshold: "99.99%"
+  - type: "throughput"
+    description: "Transactions per second"
+    threshold: ">5000 TPS"
+
+recommended_tech_stack:
+  languages: ["Java", "Go", "Python"]
+  frameworks: ["Spring Boot", "FastAPI"]
+  libraries: ["Stripe SDK", "Plaid", "Dwolla"]
+  deployment: ["Kubernetes", "AWS PCI-compliant VPC", "HashiCorp Vault"]
+
+data_flows:
+  - name: "Card Payment Flow"
+    steps:
+      - "User enters card details"
+      - "Frontend encrypts PAN (E2EE)"
+      - "Tokenize via payment processor"
+      - "Send auth request to card network"
+      - "3D Secure challenge if needed"
+      - "Receive auth response"
+      - "Log with masked PAN"
+    security_controls:
+      - "TLS 1.3"
+      - "Tokenization"
+      - "3DS 2.0"
+      - "Velocity checks"
+
+integration_points:
+  external_apis:
+    - name: "Stripe API"
+      protocol: "REST/HTTPS"
+      authentication: "Bearer token"
+      rate_limit: "100 req/s"
+  message_queues:
+    - name: "Transaction Bus"
+      technology: "Kafka"
+      topics: ["payment.auth", "fraud.alert"]
+  databases:
+    - name: "Transaction Ledger"
+      type: "PostgreSQL"
+      compliance: "PCI DSS Level 1"

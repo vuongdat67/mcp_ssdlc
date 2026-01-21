@@ -18,6 +18,7 @@ export interface PMOutput {
     teamAllocation: TeamAllocation;
     criticalPath: CriticalPathAnalysis;
     riskRegister: RiskItem[];
+    costEstimate: CostEstimate;
     ganttChart: string; // Mermaid gantt diagram
 }
 
@@ -98,6 +99,42 @@ export interface RiskItem {
     status: 'identified' | 'mitigating' | 'resolved' | 'accepted';
 }
 
+export interface CostEstimate {
+    laborCost: number;           // Total developer hours * hourly rate
+    infrastructureCost: number;  // Cloud infrastructure (monthly * project duration)
+    licenseCost: number;         // Tool licenses (GitHub, SonarQube, etc.)
+    contingency: number;         // Buffer for unknowns (typically 20%)
+    totalBudget: number;         // Sum of all costs
+    breakdown: CostBreakdown;
+}
+
+export interface CostBreakdown {
+    personnel: PersonnelCost[];
+    infrastructure: InfrastructureCost[];
+    tools: ToolCost[];
+}
+
+export interface PersonnelCost {
+    role: string;
+    hourlyRate: number;
+    totalHours: number;
+    cost: number;
+}
+
+export interface InfrastructureCost {
+    service: string;
+    monthlyCost: number;
+    durationMonths: number;
+    totalCost: number;
+}
+
+export interface ToolCost {
+    tool: string;
+    licenseCost: number; // One-time or monthly
+    billingType: 'monthly' | 'annual' | 'one-time';
+    totalCost: number;
+}
+
 /**
  * Main PM Tool Entry Point
  * Generate comprehensive project plan with sprint breakdown and risk analysis
@@ -126,7 +163,10 @@ export function generateProjectPlan(input: PMInput): PMOutput {
     // STEP 6: Identify and analyze risks
     const riskRegister = generateRiskRegister(input.features, input.threats, criticalPath);
 
-    // STEP 7: Generate Gantt chart visualization
+    // STEP 7: Calculate cost estimate
+    const costEstimate = calculateCostEstimate(estimatedTasks, teamAllocation, sprints.length, input.sprintDuration);
+
+    // STEP 8: Generate Gantt chart visualization
     const ganttChart = generateGanttChart(sprints, estimatedTasks);
 
     return {
@@ -135,6 +175,7 @@ export function generateProjectPlan(input: PMInput): PMOutput {
         teamAllocation,
         criticalPath,
         riskRegister,
+        costEstimate,
         ganttChart
     };
 }
@@ -862,4 +903,123 @@ function addDays(dateStr: string, days: number): string {
     const date = new Date(dateStr);
     date.setDate(date.getDate() + days);
     return date.toISOString().split('T')[0];
+}
+
+/**
+ * Calculate comprehensive cost estimate for the project
+ */
+function calculateCostEstimate(
+    tasks: Task[],
+    teamAllocation: TeamAllocation,
+    totalSprints: number,
+    sprintWeeks: number
+): CostEstimate {
+    // Industry standard hourly rates (USD)
+    const hourlyRates: Record<string, number> = {
+        'Tech Lead': 150,
+        'Backend Dev': 120,
+        'Frontend Dev': 110,
+        'Security Engineer': 140,
+        'QA Engineer': 100,
+        'DevOps Engineer': 130,
+        'Default': 100
+    };
+
+    // Calculate personnel costs
+    const personnel: PersonnelCost[] = teamAllocation.roles.map(member => {
+        const rate = hourlyRates[member.role] || hourlyRates['Default'];
+        return {
+            role: member.role,
+            hourlyRate: rate,
+            totalHours: member.totalHours,
+            cost: member.totalHours * rate
+        };
+    });
+
+    const totalLaborCost = personnel.reduce((sum, p) => sum + p.cost, 0);
+
+    // Calculate infrastructure costs (monthly estimates)
+    const projectMonths = Math.ceil((totalSprints * sprintWeeks) / 4);
+    const infrastructure: InfrastructureCost[] = [
+        {
+            service: 'Cloud Hosting (AWS/Azure)',
+            monthlyCost: 2000, // Development + staging environments
+            durationMonths: projectMonths,
+            totalCost: 2000 * projectMonths
+        },
+        {
+            service: 'Database (RDS/Managed DB)',
+            monthlyCost: 500,
+            durationMonths: projectMonths,
+            totalCost: 500 * projectMonths
+        },
+        {
+            service: 'CDN & Storage (S3, CloudFront)',
+            monthlyCost: 300,
+            durationMonths: projectMonths,
+            totalCost: 300 * projectMonths
+        },
+        {
+            service: 'Monitoring & Logging (DataDog, New Relic)',
+            monthlyCost: 400,
+            durationMonths: projectMonths,
+            totalCost: 400 * projectMonths
+        }
+    ];
+
+    const totalInfrastructureCost = infrastructure.reduce((sum, i) => sum + i.totalCost, 0);
+
+    // Calculate tool/license costs
+    const tools: ToolCost[] = [
+        {
+            tool: 'GitHub Enterprise',
+            licenseCost: 21, // per user per month
+            billingType: 'monthly',
+            totalCost: 21 * teamAllocation.roles.length * projectMonths
+        },
+        {
+            tool: 'SonarQube Enterprise',
+            licenseCost: 150, // per month (team plan)
+            billingType: 'monthly',
+            totalCost: 150 * projectMonths
+        },
+        {
+            tool: 'Jira & Confluence',
+            licenseCost: 14, // per user per month
+            billingType: 'monthly',
+            totalCost: 14 * teamAllocation.roles.length * projectMonths
+        },
+        {
+            tool: 'Snyk (Security Scanning)',
+            licenseCost: 98, // per month (team plan)
+            billingType: 'monthly',
+            totalCost: 98 * projectMonths
+        },
+        {
+            tool: 'Figma (Design)',
+            licenseCost: 15, // per editor per month
+            billingType: 'monthly',
+            totalCost: 15 * 2 * projectMonths // 2 designers
+        }
+    ];
+
+    const totalLicenseCost = tools.reduce((sum, t) => sum + t.totalCost, 0);
+
+    // Calculate total and contingency
+    const subtotal = totalLaborCost + totalInfrastructureCost + totalLicenseCost;
+    const contingency = subtotal * 0.20; // 20% buffer for unknowns
+    const totalBudget = subtotal + contingency;
+
+    return {
+        laborCost: totalLaborCost,
+        infrastructureCost: totalInfrastructureCost,
+        licenseCost: totalLicenseCost,
+        contingency,
+        totalBudget,
+        breakdown: {
+            personnel,
+            infrastructure,
+            tools
+        }
+    };
 }

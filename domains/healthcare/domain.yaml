@@ -50,3 +50,84 @@ data_classification:
   medium:
     - Appointment times
     - Provider assignments
+  low:
+    - Public clinic information
+
+# Extended schema fields
+domain_specific_requirements:
+  - "MUST comply with HIPAA Security Rule (45 CFR Part 164)"
+  - "MUST comply with HIPAA Privacy Rule (patient consent)"
+  - "MUST implement HL7 FHIR R4 for interoperability"
+  - "MUST provide audit trail for all PHI access"
+  - "MUST support patient right to access records (within 30 days)"
+  - "SHOULD implement SMART on FHIR for app integration"
+  - "SHOULD support Direct Secure Messaging for provider communication"
+
+technical_constraints:
+  - type: "latency"
+    description: "EHR query response time"
+    threshold: "<500ms p95"
+  - type: "availability"
+    description: "Clinical system uptime"
+    threshold: "99.9% (life-critical)"
+  - type: "audit_retention"
+    description: "PHI access logs"
+    threshold: "6 years minimum"
+  - type: "encryption"
+    description: "PHI at rest and in transit"
+    threshold: "AES-256, TLS 1.3"
+
+recommended_tech_stack:
+  languages: ["Python", "Java", "TypeScript"]
+  frameworks: ["Django", "Spring Boot", "HAPI FHIR"]
+  libraries: ["pyFHIR", "HL7apy", "python-hl7"]
+  deployment: ["HIPAA-compliant AWS", "Azure Healthcare APIs", "Epic/Cerner integration"]
+
+data_flows:
+  - name: "Patient Registration & Consent"
+    steps:
+      - "Patient provides personal info + insurance"
+      - "Verify insurance eligibility (real-time API)"
+      - "Obtain consent for PHI use/disclosure"
+      - "Generate unique MRN (Medical Record Number)"
+      - "Store PHI with encryption (AES-256)"
+      - "Log access event (HIPAA audit log)"
+    security_controls:
+      - "TLS 1.3 in transit"
+      - "AES-256 at rest"
+      - "Role-based access control (RBAC)"
+      - "Patient consent tracking"
+
+  - name: "Provider Orders Lab Test"
+    steps:
+      - "Provider selects lab test in EHR"
+      - "System checks for contraindications (drug allergies)"
+      - "Generate HL7 ORM (Order Message)"
+      - "Send to lab system via secure messaging"
+      - "Lab performs test, generates HL7 ORU (Results)"
+      - "EHR receives results, notifies provider"
+      - "Provider reviews and signs off"
+    security_controls:
+      - "HL7 message encryption"
+      - "Digital signature (non-repudiation)"
+      - "Audit trail for order lifecycle"
+
+integration_points:
+  external_apis:
+    - name: "Insurance Eligibility API"
+      protocol: "REST/HTTPS"
+      authentication: "OAuth 2.0"
+      standard: "X12 270/271 EDI"
+    - name: "FHIR API (interoperability)"
+      protocol: "REST/HTTPS"
+      authentication: "SMART on FHIR (OAuth 2.0)"
+      rate_limit: "1000 req/min"
+  message_queues:
+    - name: "HL7 Message Bus"
+      technology: "Mirth Connect"
+      messages: ["ADT (admit/discharge)", "ORM (orders)", "ORU (results)"]
+  databases:
+    - name: "EHR Database"
+      type: "PostgreSQL"
+      encryption: "TDE + column-level (PHI)"
+      backup: "Encrypted backups, 7-year retention"

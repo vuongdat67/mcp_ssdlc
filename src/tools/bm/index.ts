@@ -1,6 +1,7 @@
 // Project Manager Tool - Sprint Planning, Task Breakdown, Risk Management
 import type { Feature } from '../../types/tech-lead.js';
 import type { Threat } from '../../types/tools.js';
+import type { LoadedDomain } from '../../domains/loader.js';
 
 export interface PMInput {
     features: Feature[];
@@ -8,6 +9,7 @@ export interface PMInput {
     teamSize: number;
     sprintDuration: number; // weeks (typically 2)
     projectStartDate: string; // ISO date
+    domain?: LoadedDomain; // Add domain for domain-aware task generation
 }
 
 export interface PMOutput {
@@ -102,7 +104,7 @@ export interface RiskItem {
  */
 export function generateProjectPlan(input: PMInput): PMOutput {
     // STEP 1: Break down features into tasks
-    const tasks = generateTaskBreakdown(input.features, input.threats);
+    const tasks = generateTaskBreakdown(input.features, input.threats, input.domain);
 
     // STEP 2: Estimate effort and assign story points
     const estimatedTasks = estimateTaskEffort(tasks);
@@ -140,7 +142,7 @@ export function generateProjectPlan(input: PMInput): PMOutput {
 /**
  * Break down features into granular tasks
  */
-function generateTaskBreakdown(features: Feature[], threats: Threat[]): Task[] {
+function generateTaskBreakdown(features: Feature[], threats: Threat[], domain?: LoadedDomain): Task[] {
     const tasks: Task[] = [];
     let taskId = 1;
 
@@ -160,7 +162,8 @@ function generateTaskBreakdown(features: Feature[], threats: Threat[]): Task[] {
             acceptanceCriteria: [
                 'Architecture diagram approved',
                 'Data model documented',
-                'API contracts defined'
+                'API contracts defined',
+                ...getDomainSpecificDesignCriteria(domain)
             ],
             relatedFeature: feature.id,
             sprint: 0 // Will be assigned later
@@ -233,7 +236,8 @@ function generateTaskBreakdown(features: Feature[], threats: Threat[]): Task[] {
                 'No critical vulnerabilities',
                 'Input validation verified',
                 'Authentication/authorization checked',
-                'Secrets management verified'
+                'Secrets management verified',
+                ...getDomainSpecificSecurityCriteria(domain)
             ],
             relatedFeature: feature.id,
             sprint: 0
@@ -734,6 +738,115 @@ function generateGanttChart(sprints: SprintPlan[], tasks: Task[]): string {
 }
 
 // ==================== HELPER FUNCTIONS ====================
+
+/**
+ * Get domain-specific design acceptance criteria
+ */
+function getDomainSpecificDesignCriteria(domain?: LoadedDomain): string[] {
+    if (!domain) return [];
+    
+    const criteria: string[] = [];
+    
+    switch (domain.name) {
+        case 'secure_comm':
+            criteria.push('Cryptographic protocol design reviewed (X3DH, Double Ratchet)');
+            criteria.push('Key management strategy documented');
+            break;
+        case 'malware_analysis':
+            criteria.push('Sandbox isolation architecture approved');
+            criteria.push('Static analysis engine integration designed');
+            break;
+        case 'blockchain':
+            criteria.push('Smart contract security patterns identified');
+            criteria.push('Consensus mechanism documented');
+            break;
+        case 'ml_ai':
+            criteria.push('Model serving architecture designed');
+            criteria.push('Adversarial defense strategy defined');
+            break;
+        case 'networksec':
+            criteria.push('IDS/IPS deployment topology designed');
+            criteria.push('Packet capture strategy documented');
+            break;
+        case 'websec':
+            criteria.push('WAF rule architecture designed');
+            criteria.push('Bot detection strategy defined');
+            break;
+        case 'appsec':
+            criteria.push('SAST/DAST integration designed');
+            criteria.push('Security testing pipeline documented');
+            break;
+        case 'devsecops':
+            criteria.push('CI/CD security gates designed');
+            criteria.push('Supply chain security controls documented');
+            break;
+        case 'soc':
+            criteria.push('SIEM correlation rules designed');
+            criteria.push('Incident response playbooks defined');
+            break;
+    }
+    
+    return criteria;
+}
+
+/**
+ * Get domain-specific security acceptance criteria
+ */
+function getDomainSpecificSecurityCriteria(domain?: LoadedDomain): string[] {
+    if (!domain) return [];
+    
+    const criteria: string[] = [];
+    
+    switch (domain.name) {
+        case 'secure_comm':
+            criteria.push('Forward secrecy verified');
+            criteria.push('Key exchange implementation audited');
+            criteria.push('Message authentication tested');
+            break;
+        case 'malware_analysis':
+            criteria.push('Sandbox escape attempts tested');
+            criteria.push('Static analysis evasion checked');
+            criteria.push('Sample containment verified');
+            break;
+        case 'blockchain':
+            criteria.push('Reentrancy vulnerability tested');
+            criteria.push('Integer overflow/underflow checked');
+            criteria.push('Gas optimization verified');
+            break;
+        case 'ml_ai':
+            criteria.push('Adversarial attack resistance tested');
+            criteria.push('Model privacy guarantees verified');
+            criteria.push('Input validation for model inference');
+            break;
+        case 'networksec':
+            criteria.push('IDS/IPS rules tested');
+            criteria.push('Packet capture verified');
+            criteria.push('False positive rate checked');
+            break;
+        case 'websec':
+            criteria.push('WAF rules tested against OWASP Top 10');
+            criteria.push('Rate limiting verified');
+            criteria.push('Bot detection accuracy checked');
+            break;
+        case 'appsec':
+            criteria.push('SAST findings remediated');
+            criteria.push('DAST scan completed');
+            criteria.push('SCA vulnerabilities patched');
+            break;
+        case 'devsecops':
+            criteria.push('CI/CD security gates tested');
+            criteria.push('Secret scanning verified');
+            criteria.push('Container security scanned');
+            break;
+        case 'soc':
+            criteria.push('SIEM correlation rules tested');
+            criteria.push('Incident response playbooks verified');
+            criteria.push('Log ingestion tested');
+            break;
+    }
+    
+    return criteria;
+}
 
 function matchRole(assignedRole: string, memberRole: string): boolean {
     const normalized = assignedRole.toLowerCase();

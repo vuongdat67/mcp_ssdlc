@@ -46,7 +46,8 @@ export function generateSRS(output: PipelineOutput): string {
     lines.push('10. [QA Strategy](#10-qa-strategy)');
     lines.push('11. [DevOps & Infrastructure](#11-devops--infrastructure)');
     lines.push('12. [Risk Management](#12-risk-management)');
-    lines.push('13. [Appendix](#13-appendix)');
+    lines.push('13. [Domain-Specific Requirements](#13-domain-specific-requirements)');
+    lines.push('14. [Appendix](#14-appendix)');
     lines.push('');
     lines.push('---');
     lines.push('');
@@ -465,8 +466,16 @@ export function generateSRS(output: PipelineOutput): string {
     lines.push('---');
     lines.push('');
 
-    // ==================== 13. APPENDIX ====================
-    lines.push('## 13. APPENDIX');
+    // ==================== 13. DOMAIN-SPECIFIC REQUIREMENTS ====================
+    lines.push('## 13. DOMAIN-SPECIFIC REQUIREMENTS');
+    lines.push('');
+    lines.push(generateDomainSpecificSection(domain, phases));
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+
+    // ==================== 14. APPENDIX ====================
+    lines.push('## 14. APPENDIX');
     lines.push('');
     lines.push('### Appendix A: Glossary');
     lines.push(generateGlossary(domain.name));
@@ -495,6 +504,286 @@ export function generateSRS(output: PipelineOutput): string {
 }
 
 // ==================== HELPER FUNCTIONS ====================
+
+function generateDomainSpecificSection(domain: any, phases: any): string {
+    const lines: string[] = [];
+    const domainName = domain.name;
+
+    lines.push('This section covers requirements specific to the ' + domainName + ' domain.');
+    lines.push('');
+
+    // Secure Communication Domain
+    if (domainName === 'secure_comm') {
+        lines.push('### 13.1 Cryptographic Protocol Requirements');
+        lines.push('');
+        lines.push('**End-to-End Encryption Protocol**:');
+        lines.push('- MUST implement Signal Protocol (X3DH + Double Ratchet)');
+        lines.push('- MUST support perfect forward secrecy (PFS)');
+        lines.push('- MUST support post-compromise security (future secrecy)');
+        lines.push('- SHOULD support deniable authentication');
+        lines.push('');
+        lines.push('**Key Management**:');
+        lines.push('- Identity keys: Long-term Ed25519 signing keys');
+        lines.push('- PreKeys: 100 one-time Curve25519 keys uploaded to server');
+        lines.push('- Signed PreKey: Rotated weekly, signed by identity key');
+        lines.push('- Session keys: Derived via X3DH, rotated per message via Double Ratchet');
+        lines.push('');
+        lines.push('**Cryptographic Primitives**:');
+        lines.push('| Primitive | Algorithm | Key Size | Use Case |');
+        lines.push('|-----------|-----------|----------|----------|');
+        lines.push('| Key Agreement | X25519 (ECDH) | 256-bit | Session establishment |');
+        lines.push('| Signing | Ed25519 | 256-bit | Identity & PreKey signing |');
+        lines.push('| Symmetric Encryption | AES-256-GCM | 256-bit | Message encryption |');
+        lines.push('| KDF | HKDF-SHA256 | N/A | Key derivation |');
+        lines.push('| MAC | HMAC-SHA256 | 256-bit | Message authentication |');
+        lines.push('');
+    }
+
+    // Malware Analysis Domain
+    if (domainName === 'malware_analysis') {
+        lines.push('### 13.1 Sandbox Environment Requirements');
+        lines.push('');
+        lines.push('**Isolation Technology**:');
+        lines.push('- MUST use hardware-assisted virtualization (Intel VT-x/AMD-V)');
+        lines.push('- MUST implement snapshot-restore mechanism (<10 seconds)');
+        lines.push('- SHOULD use nested virtualization for evasion resistance');
+        lines.push('');
+        lines.push('**Analysis Capabilities**:');
+        lines.push('| Capability | Technology | Purpose |');
+        lines.push('|------------|------------|---------|');
+        lines.push('| API Monitoring | Kernel hooks (Detours) | Capture Win32 API calls |');
+        lines.push('| Network Traffic | PCAP (Wireshark) | Analyze C2 communication |');
+        lines.push('| File System | minifilter driver | Track file modifications |');
+        lines.push('| Registry | RegNotifyChangeKeyValue | Monitor registry changes |');
+        lines.push('| Memory Forensics | Volatility Framework | Extract IOCs from memory |');
+        lines.push('');
+        lines.push('### 13.2 Static Analysis Requirements');
+        lines.push('');
+        lines.push('- PE Header analysis: Detect packers (UPX, ASPack), suspicious sections');
+        lines.push('- String extraction: Unicode, ASCII, obfuscated strings');
+        lines.push('- Import analysis: Suspicious APIs (VirtualAlloc, CreateRemoteThread)');
+        lines.push('- YARA rules: 500+ signature library (malware families, IOCs)');
+        lines.push('');
+    }
+
+    // Blockchain Domain
+    if (domainName === 'blockchain') {
+        lines.push('### 13.1 Smart Contract Security Requirements');
+        lines.push('');
+        lines.push('**Vulnerability Prevention**:');
+        lines.push('| Vulnerability | Mitigation | Verification |');
+        lines.push('|---------------|------------|--------------|');
+        lines.push('| Reentrancy | Checks-Effects-Interactions pattern | Static analysis (Slither) |');
+        lines.push('| Integer Overflow | SafeMath library (Solidity 0.8+) | Symbolic execution (Manticore) |');
+        lines.push('| Access Control | OpenZeppelin Ownable/AccessControl | Manual review |');
+        lines.push('| Front-running | Commit-reveal scheme | Gas price analysis |');
+        lines.push('| DoS (Gas Limit) | Gas profiling, loop bounds | Fuzzing (Echidna) |');
+        lines.push('');
+        lines.push('**Audit Requirements**:');
+        lines.push('- MUST pass automated analysis: Slither, Mythril, Securify');
+        lines.push('- MUST undergo manual security review by certified auditor');
+        lines.push('- SHOULD achieve 100% branch coverage in unit tests');
+        lines.push('- MUST implement emergency pause mechanism (circuit breaker)');
+        lines.push('');
+    }
+
+    // ML/AI Domain
+    if (domainName === 'ml_ai') {
+        lines.push('### 13.1 Model Security Requirements');
+        lines.push('');
+        lines.push('**Adversarial Robustness**:');
+        lines.push('- MUST implement adversarial training (FGSM, PGD attacks)');
+        lines.push('- MUST achieve >80% robust accuracy under ε=0.03 perturbations');
+        lines.push('- SHOULD use certified defense mechanisms (randomized smoothing)');
+        lines.push('');
+        lines.push('**Privacy Protection**:');
+        lines.push('| Threat | Defense | Privacy Guarantee |');
+        lines.push('|--------|---------|-------------------|');
+        lines.push('| Model Inversion | Differential Privacy | (ε, δ)-DP with ε<1.0 |');
+        lines.push('| Membership Inference | DP-SGD training | Privacy loss budget tracking |');
+        lines.push('| Model Extraction | Query rate limiting | <100 queries/user/day |');
+        lines.push('| Data Poisoning | Input validation + anomaly detection | >95% detection rate |');
+        lines.push('');
+        lines.push('### 13.2 Model Governance');
+        lines.push('');
+        lines.push('- Model versioning: Semantic versioning (SemVer)');
+        lines.push('- Model registry: MLflow with A/B testing support');
+        lines.push('- Bias monitoring: Fairness metrics (demographic parity, equalized odds)');
+        lines.push('- Explainability: SHAP/LIME for model interpretability');
+        lines.push('');
+    }
+
+    // Network Security Domain
+    if (domainName === 'networksec') {
+        lines.push('### 13.1 Network Monitoring Requirements');
+        lines.push('');
+        lines.push('**IDS/IPS Capabilities**:');
+        lines.push('- Signature-based detection: Snort/Suricata with ET Pro rulesets');
+        lines.push('- Anomaly-based detection: ML models for baseline deviation');
+        lines.push('- Protocol analysis: Deep packet inspection (HTTP, DNS, TLS)');
+        lines.push('- Performance: 10Gbps throughput, <5ms latency');
+        lines.push('');
+        lines.push('**Traffic Analysis**:');
+        lines.push('| Layer | Technology | Threat Coverage |');
+        lines.push('|-------|------------|-----------------|');
+        lines.push('| L2/L3 | NetFlow/sFlow | Volumetric DDoS, port scanning |');
+        lines.push('| L4 | TCP stream reassembly | SYN flood, connection hijacking |');
+        lines.push('| L7 | Application protocol parsers | SQLi, XSS, command injection |');
+        lines.push('| TLS | JA3/JA3S fingerprinting | Malware C2, encrypted threats |');
+        lines.push('');
+    }
+
+    // Web Security Domain
+    if (domainName === 'websec') {
+        lines.push('### 13.1 Web Application Firewall (WAF) Requirements');
+        lines.push('');
+        lines.push('**OWASP Top 10 Coverage**:');
+        lines.push('| Threat | Detection Method | Mitigation |');
+        lines.push('|--------|------------------|------------|');
+        lines.push('| SQL Injection | Pattern matching (regex) + semantic analysis | Block + sanitize input |');
+        lines.push('| XSS | Content Security Policy (CSP) enforcement | Encode output |');
+        lines.push('| CSRF | Token validation (HMAC-SHA256) | SameSite cookies |');
+        lines.push('| XXE | XML parser hardening | Disable external entities |');
+        lines.push('| SSRF | URL whitelist validation | Deny private IP ranges |');
+        lines.push('');
+        lines.push('**Rate Limiting**:');
+        lines.push('- Global: 10,000 requests/IP/hour');
+        lines.push('- Per-endpoint: 100 requests/IP/minute');
+        lines.push('- Authentication: 5 failed attempts/15 minutes (exponential backoff)');
+        lines.push('');
+        lines.push('### 13.2 Bot Detection');
+        lines.push('');
+        lines.push('- JavaScript challenge: Invisible CAPTCHA (hCaptcha)');
+        lines.push('- Behavioral analysis: Mouse movements, keystroke dynamics');
+        lines.push('- TLS fingerprinting: JA3 hash validation');
+        lines.push('- Reputation scoring: IP/ASN reputation databases');
+        lines.push('');
+    }
+
+    // AppSec Domain
+    if (domainName === 'appsec') {
+        lines.push('### 13.1 Security Testing Requirements');
+        lines.push('');
+        lines.push('**SAST (Static Application Security Testing)**:');
+        lines.push('- Tools: Semgrep (CI), SonarQube (quality gates)');
+        lines.push('- Scan frequency: Every pull request');
+        lines.push('- Blocking threshold: High/Critical severity findings');
+        lines.push('- Coverage: CWE Top 25, OWASP Top 10');
+        lines.push('');
+        lines.push('**DAST (Dynamic Application Security Testing)**:');
+        lines.push('- Tools: OWASP ZAP (authenticated scans)');
+        lines.push('- Scan frequency: Nightly (staging environment)');
+        lines.push('- Test scope: Full application crawl + API fuzzing');
+        lines.push('');
+        lines.push('**SCA (Software Composition Analysis)**:');
+        lines.push('| Tool | Purpose | Frequency |');
+        lines.push('|------|---------|-----------|');
+        lines.push('| Snyk | Dependency vulnerability scanning | Every commit |');
+        lines.push('| OWASP Dependency-Check | License compliance | Weekly |');
+        lines.push('| npm audit / pip-audit | Package manager audits | Pre-deployment |');
+        lines.push('');
+        lines.push('### 13.2 Secure Development Lifecycle (SDL)');
+        lines.push('');
+        lines.push('- Threat modeling: STRIDE methodology for each feature');
+        lines.push('- Security training: Annual OWASP training for all developers');
+        lines.push('- Code review: Security-focused review for auth/crypto/input handling');
+        lines.push('- Penetration testing: Quarterly external pentest');
+        lines.push('');
+    }
+
+    // DevSecOps Domain
+    if (domainName === 'devsecops') {
+        lines.push('### 13.1 CI/CD Security Requirements');
+        lines.push('');
+        lines.push('**Pipeline Security Controls**:');
+        lines.push('| Stage | Security Check | Tool | Failure Action |');
+        lines.push('|-------|----------------|------|----------------|');
+        lines.push('| Code Commit | Secret scanning | TruffleHog | Block commit |');
+        lines.push('| Build | SAST | Semgrep | Fail PR |');
+        lines.push('| Dependencies | SCA | Snyk | Warn + create ticket |');
+        lines.push('| Container | Image scanning | Trivy | Block deployment |');
+        lines.push('| Deploy | DAST | OWASP ZAP | Alert + continue |');
+        lines.push('| Runtime | RASP | Contrast Security | Alert + block attack |');
+        lines.push('');
+        lines.push('**Supply Chain Security**:');
+        lines.push('- Dependency pinning: Lock files (package-lock.json, Pipfile.lock)');
+        lines.push('- Binary verification: Checksum validation, signature verification');
+        lines.push('- Private registry: Internal npm/PyPI mirror with allowlist');
+        lines.push('- SBOM generation: CycloneDX format for all releases');
+        lines.push('');
+    }
+
+    // SOC Domain
+    if (domainName === 'soc') {
+        lines.push('### 13.1 SIEM Requirements');
+        lines.push('');
+        lines.push('**Log Aggregation**:');
+        lines.push('- Data sources: Application logs, infrastructure logs, security logs, audit logs');
+        lines.push('- Ingestion rate: 100K events/second');
+        lines.push('- Retention: 90 days hot storage, 1 year cold storage');
+        lines.push('- Format: JSON (structured logging) with CEF normalization');
+        lines.push('');
+        lines.push('**Correlation Rules**:');
+        lines.push('| Use Case | Detection Logic | Alert Priority |');
+        lines.push('|----------|-----------------|----------------|');
+        lines.push('| Brute Force Attack | >5 failed logins in 5 min | High |');
+        lines.push('| Privilege Escalation | User role change + admin action in 1 min | Critical |');
+        lines.push('| Data Exfiltration | >100MB upload to external IP | Critical |');
+        lines.push('| Lateral Movement | RDP/SSH from non-admin workstation | High |');
+        lines.push('| Malware C2 | DNS query to known-bad domain | Critical |');
+        lines.push('');
+        lines.push('### 13.2 Incident Response');
+        lines.push('');
+        lines.push('**Playbooks**:');
+        lines.push('- P1 (Critical): Response time <15 minutes');
+        lines.push('- P2 (High): Response time <1 hour');
+        lines.push('- P3 (Medium): Response time <4 hours');
+        lines.push('- P4 (Low): Response time <24 hours');
+        lines.push('');
+        lines.push('**SOAR Integration**:');
+        lines.push('- Automated containment: Isolate host, block IP/domain');
+        lines.push('- Enrichment: VirusTotal, AbuseIPDB, threat intelligence feeds');
+        lines.push('- Ticketing: Jira/ServiceNow integration');
+        lines.push('');
+    }
+
+    // Add domain-specific tech stack if available
+    if (domain.domain && domain.domain.recommended_tech_stack) {
+        lines.push('### Domain-Recommended Tech Stack');
+        lines.push('');
+        const stack = domain.domain.recommended_tech_stack;
+        if (stack.languages && stack.languages.length > 0) {
+            lines.push(`**Languages**: ${stack.languages.join(', ')}`);
+        }
+        if (stack.frameworks && stack.frameworks.length > 0) {
+            lines.push(`**Frameworks**: ${stack.frameworks.join(', ')}`);
+        }
+        if (stack.libraries && stack.libraries.length > 0) {
+            lines.push(`**Libraries**: ${stack.libraries.join(', ')}`);
+        }
+        if (stack.deployment && stack.deployment.length > 0) {
+            lines.push(`**Deployment**: ${stack.deployment.join(', ')}`);
+        }
+        lines.push('');
+    }
+
+    // Add domain-specific data flows if available
+    if (domain.domain && domain.domain.data_flows && domain.domain.data_flows.length > 0) {
+        lines.push('### Critical Data Flows');
+        lines.push('');
+        domain.domain.data_flows.forEach((flow: any) => {
+            lines.push(`**${flow.name}**:`);
+            if (flow.steps && flow.steps.length > 0) {
+                flow.steps.forEach((step: string, idx: number) => {
+                    lines.push(`${idx + 1}. ${step}`);
+                });
+            }
+            lines.push('');
+        });
+    }
+
+    return lines.join('\n');
+}
 
 function getStakeholderNeeds(type: string): string {
     const needs: Record<string, string> = {

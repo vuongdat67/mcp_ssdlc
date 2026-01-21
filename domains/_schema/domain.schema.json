@@ -121,6 +121,120 @@
                     }
                 }
             }
+        },
+        "domain_specific_requirements": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Domain-specific technical requirements (e.g., 'MUST use X3DH for key exchange')"
+        },
+        "technical_constraints": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["type", "description"],
+                "properties": {
+                    "type": {
+                        "enum": ["performance", "scale", "latency", "throughput", "availability", "reliability"]
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "threshold": {
+                        "type": "string"
+                    }
+                }
+            },
+            "description": "Technical constraints with measurable thresholds"
+        },
+        "recommended_tech_stack": {
+            "type": "object",
+            "properties": {
+                "languages": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "frameworks": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "libraries": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "deployment": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "description": "Recommended technology stack for this domain"
+        },
+        "data_flows": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["name", "steps"],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "steps": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "security_controls": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "description": "Critical data flows with security controls"
+        },
+        "integration_points": {
+            "type": "object",
+            "properties": {
+                "external_apis": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "protocol": {"type": "string"},
+                            "auth": {"type": "string"},
+                            "purpose": {"type": "string"}
+                        }
+                    }
+                },
+                "message_queues": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "databases": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "description": "External integration points and dependencies"
         }
     }
 }

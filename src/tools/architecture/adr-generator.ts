@@ -194,6 +194,27 @@ function identifyDecisionAreas(modules: Module[], domain?: LoadedDomain): string
         areas.push('Smart Contract Language');
     }
 
+    if (domain?.name === 'ml_ai') {
+        areas.push('Model Serving Architecture');
+        areas.push('Feature Store Selection');
+        areas.push('Adversarial Defense Strategy');
+    }
+
+    if (domain?.name === 'networksec') {
+        areas.push('IDS/IPS Deployment Mode');
+        areas.push('Packet Capture Strategy');
+    }
+
+    if (domain?.name === 'websec') {
+        areas.push('WAF Architecture');
+        areas.push('Bot Detection Strategy');
+    }
+
+    if (domain?.name === 'appsec') {
+        areas.push('SAST Tool Selection');
+        areas.push('Security Testing Pipeline');
+    }
+
     return areas;
 }
 
@@ -233,6 +254,28 @@ function generateADR(
             return generateSandboxADR(adrId);
         case 'Consensus Algorithm':
             return generateConsensusADR(adrId);
+        // ML/AI domain
+        case 'Model Serving Architecture':
+            return generateModelServingADR(adrId);
+        case 'Feature Store Selection':
+            return generateGenericADR(adrId, area, constraints);
+        case 'Adversarial Defense Strategy':
+            return generateGenericADR(adrId, area, constraints);
+        // Network Security domain
+        case 'IDS/IPS Deployment Mode':
+            return generateIDSDeploymentADR(adrId);
+        case 'Packet Capture Strategy':
+            return generateGenericADR(adrId, area, constraints);
+        // Web Security domain
+        case 'WAF Architecture':
+            return generateWAFArchitectureADR(adrId);
+        case 'Bot Detection Strategy':
+            return generateGenericADR(adrId, area, constraints);
+        // AppSec domain
+        case 'SAST Tool Selection':
+            return generateSASTToolADR(adrId);
+        case 'Security Testing Pipeline':
+            return generateGenericADR(adrId, area, constraints);
         default:
             return generateGenericADR(adrId, area, constraints);
     }
@@ -1925,5 +1968,479 @@ Combine retry with exponential backoff, circuit breaker, and timeouts.
         ],
         relatedDecisions: ['ADR-002', 'ADR-006'],
         complianceImpact: ['SOC2 (availability controls)']
+    };
+}
+
+/**
+ * Generate ADR for Model Serving Architecture (ML/AI Domain)
+ */
+function generateModelServingADR(id: string): ArchitectureDecision {
+    return {
+        id,
+        title: 'Model Serving Architecture',
+        status: 'accepted',
+        date: new Date().toISOString().split('T')[0],
+        context: `
+We need to deploy machine learning models in production with:
+- Low latency inference (<100ms p95)
+- High throughput (1000+ requests/sec)
+- Support for model versioning and A/B testing
+- GPU acceleration for deep learning models
+- Secure model access and API rate limiting
+        `.trim(),
+        decisionDrivers: [
+            'Inference latency requirements (<100ms)',
+            'Model size (100MB - 5GB)',
+            'Request rate (1000+ QPS)',
+            'GPU utilization efficiency',
+            'Model update frequency'
+        ],
+        options: [
+            {
+                name: 'TensorFlow Serving',
+                description: 'Production-ready model serving system',
+                pros: [
+                    'Native TensorFlow/Keras support',
+                    'gRPC and REST API',
+                    'Model versioning built-in',
+                    'Batching optimization',
+                    'Production-proven at Google scale'
+                ],
+                cons: [
+                    'TensorFlow-specific',
+                    'Complex configuration',
+                    'Larger resource footprint'
+                ],
+                cost: 'medium',
+                complexity: 'medium',
+                riskLevel: 'low',
+                score: 85
+            },
+            {
+                name: 'TorchServe',
+                description: 'PyTorch model serving framework',
+                pros: [
+                    'Native PyTorch support',
+                    'Dynamic batching',
+                    'Multi-model serving',
+                    'Custom handlers',
+                    'Kubernetes integration'
+                ],
+                cons: [
+                    'PyTorch-specific',
+                    'Smaller community than TF Serving',
+                    'Less mature'
+                ],
+                cost: 'medium',
+                complexity: 'medium',
+                riskLevel: 'medium',
+                score: 80
+            },
+            {
+                name: 'Triton Inference Server',
+                description: 'NVIDIA multi-framework serving',
+                pros: [
+                    'Framework-agnostic (TF, PyTorch, ONNX)',
+                    'Optimized GPU utilization',
+                    'Dynamic batching',
+                    'Model ensemble support',
+                    'Best performance for GPU workloads'
+                ],
+                cons: [
+                    'NVIDIA ecosystem lock-in',
+                    'Complex setup',
+                    'GPU required'
+                ],
+                cost: 'high',
+                complexity: 'high',
+                riskLevel: 'medium',
+                score: 90
+            }
+        ],
+        decision: `
+**Selected: Triton Inference Server**
+
+Triton chosen for framework flexibility, GPU optimization, and performance.
+Supports TensorFlow, PyTorch, ONNX models. Achieves <50ms p95 latency.
+        `.trim(),
+        consequences: [
+            {
+                type: 'positive',
+                description: 'Framework-agnostic architecture',
+                impactArea: 'maintainability',
+                severity: 'high'
+            },
+            {
+                type: 'positive',
+                description: 'Best GPU utilization (>90%)',
+                impactArea: 'cost',
+                severity: 'high'
+            },
+            {
+                type: 'negative',
+                description: 'Requires GPU infrastructure',
+                impactArea: 'cost',
+                severity: 'high'
+            }
+        ],
+        relatedDecisions: ['ADR-001', 'ADR-007'],
+        complianceImpact: ['Model governance requirements', 'AI/ML regulation compliance']
+    };
+}
+
+/**
+ * Generate ADR for IDS/IPS Deployment Mode (Network Security Domain)
+ */
+function generateIDSDeploymentADR(id: string): ArchitectureDecision {
+    return {
+        id,
+        title: 'IDS/IPS Deployment Mode',
+        status: 'accepted',
+        date: new Date().toISOString().split('T')[0],
+        context: `
+We need to detect and prevent network intrusions with:
+- Real-time threat detection
+- Minimal network latency impact
+- Coverage across all network segments
+- Support for encrypted traffic inspection
+- Integration with SIEM for incident response
+        `.trim(),
+        decisionDrivers: [
+            'Network throughput (10Gbps)',
+            'Latency tolerance (<5ms)',
+            'Detection accuracy (>95% TPR, <1% FPR)',
+            'Inline vs. passive monitoring',
+            'Encrypted traffic analysis'
+        ],
+        options: [
+            {
+                name: 'Inline IPS with Bypass',
+                description: 'IPS in network path with hardware bypass',
+                pros: [
+                    'Active blocking of threats',
+                    'Hardware bypass on failure',
+                    'Real-time protection',
+                    'Meets compliance requirements',
+                    'Unified detection + prevention'
+                ],
+                cons: [
+                    'Single point of failure',
+                    'Introduces latency (2-5ms)',
+                    'Complex tuning to avoid false positives',
+                    'Throughput bottleneck'
+                ],
+                cost: 'high',
+                complexity: 'high',
+                riskLevel: 'medium',
+                score: 85
+            },
+            {
+                name: 'Passive IDS with SPAN/TAP',
+                description: 'Out-of-band monitoring via network tap',
+                pros: [
+                    'Zero network latency',
+                    'No availability risk',
+                    'Flexible placement',
+                    'Easier tuning'
+                ],
+                cons: [
+                    'Cannot block attacks',
+                    'Delayed response',
+                    'Requires separate remediation',
+                    'Misses inline encrypted traffic'
+                ],
+                cost: 'medium',
+                complexity: 'low',
+                riskLevel: 'high',
+                score: 70
+            },
+            {
+                name: 'Hybrid IDS/IPS',
+                description: 'IDS on SPAN + IPS inline at critical points',
+                pros: [
+                    'Balanced approach',
+                    'IPS only where needed',
+                    'Broad IDS coverage',
+                    'Reduced false positive impact'
+                ],
+                cons: [
+                    'Complex architecture',
+                    'Multiple tools to manage',
+                    'Higher cost'
+                ],
+                cost: 'high',
+                complexity: 'high',
+                riskLevel: 'medium',
+                score: 90
+            }
+        ],
+        decision: `
+**Selected: Hybrid IDS/IPS Architecture**
+
+Deploy IPS inline at perimeter and DMZ with hardware bypass.
+Deploy IDS via SPAN ports for internal monitoring.
+Use Suricata for unified engine with ET Pro rulesets.
+        `.trim(),
+        consequences: [
+            {
+                type: 'positive',
+                description: 'Active protection at perimeter',
+                impactArea: 'security',
+                severity: 'high'
+            },
+            {
+                type: 'positive',
+                description: 'Broad visibility without latency',
+                impactArea: 'performance',
+                severity: 'high'
+            },
+            {
+                type: 'negative',
+                description: 'Increased operational complexity',
+                impactArea: 'maintainability',
+                severity: 'medium'
+            }
+        ],
+        relatedDecisions: ['ADR-002', 'ADR-006'],
+        complianceImpact: ['PCI DSS Requirement 11.4 (IDS/IPS)', 'NIST CSF (DE.CM-1)']
+    };
+}
+
+/**
+ * Generate ADR for WAF Architecture (Web Security Domain)
+ */
+function generateWAFArchitectureADR(id: string): ArchitectureDecision {
+    return {
+        id,
+        title: 'WAF Architecture',
+        status: 'accepted',
+        date: new Date().toISOString().split('T')[0],
+        context: `
+We need a Web Application Firewall to:
+- Protect against OWASP Top 10 vulnerabilities
+- Block malicious bots and scrapers
+- Provide rate limiting and DDoS protection
+- Support custom security rules
+- Minimal latency impact (<10ms p95)
+        `.trim(),
+        decisionDrivers: [
+            'Threat coverage (OWASP Top 10)',
+            'False positive rate (<0.1%)',
+            'Latency impact (<10ms)',
+            'Custom rule flexibility',
+            'Cost at scale (10M requests/day)'
+        ],
+        options: [
+            {
+                name: 'AWS WAF',
+                description: 'Managed WAF integrated with CloudFront/ALB',
+                pros: [
+                    'Native AWS integration',
+                    'Pay-per-use pricing',
+                    'Managed rule groups (OWASP)',
+                    'Low latency (<5ms)',
+                    'DDoS protection with Shield'
+                ],
+                cons: [
+                    'AWS vendor lock-in',
+                    'Limited advanced features',
+                    'Rule complexity limitations',
+                    'Cost scales with requests'
+                ],
+                cost: 'medium',
+                complexity: 'low',
+                riskLevel: 'low',
+                score: 85
+            },
+            {
+                name: 'ModSecurity (NGINX)',
+                description: 'Open-source WAF module for NGINX',
+                pros: [
+                    'Open-source (no licensing)',
+                    'Full control and customization',
+                    'OWASP CRS support',
+                    'Self-hosted'
+                ],
+                cons: [
+                    'Requires operational expertise',
+                    'Manual tuning needed',
+                    'No managed threat intelligence',
+                    'Maintenance overhead'
+                ],
+                cost: 'low',
+                complexity: 'high',
+                riskLevel: 'medium',
+                score: 75
+            },
+            {
+                name: 'Cloudflare WAF',
+                description: 'Cloud-based WAF with CDN',
+                pros: [
+                    'Global edge deployment',
+                    'DDoS protection included',
+                    'Managed threat intelligence',
+                    'Bot detection with ML',
+                    'Best performance (<3ms)'
+                ],
+                cons: [
+                    'Cloud vendor dependency',
+                    'Limited on-premise support',
+                    'Higher cost at scale',
+                    'Less customization'
+                ],
+                cost: 'high',
+                complexity: 'low',
+                riskLevel: 'low',
+                score: 90
+            }
+        ],
+        decision: `
+**Selected: Cloudflare WAF**
+
+Cloudflare chosen for global edge protection, ML-based bot detection, and DDoS mitigation.
+Achieves <3ms latency with 99.99% availability SLA.
+        `.trim(),
+        consequences: [
+            {
+                type: 'positive',
+                description: 'Best-in-class DDoS protection',
+                impactArea: 'security',
+                severity: 'high'
+            },
+            {
+                type: 'positive',
+                description: 'Global edge reduces latency',
+                impactArea: 'performance',
+                severity: 'high'
+            },
+            {
+                type: 'negative',
+                description: 'Vendor lock-in to Cloudflare',
+                impactArea: 'maintainability',
+                severity: 'medium'
+            }
+        ],
+        relatedDecisions: ['ADR-002', 'ADR-003'],
+        complianceImpact: ['PCI DSS Requirement 6.6 (WAF)', 'OWASP ASVS compliance']
+    };
+}
+
+/**
+ * Generate ADR for SAST Tool Selection (AppSec Domain)
+ */
+function generateSASTToolADR(id: string): ArchitectureDecision {
+    return {
+        id,
+        title: 'SAST Tool Selection',
+        status: 'accepted',
+        date: new Date().toISOString().split('T')[0],
+        context: `
+We need static application security testing to:
+- Detect vulnerabilities in source code (SQL injection, XSS, etc.)
+- Integrate with CI/CD pipeline
+- Support multiple languages (Java, Python, JavaScript)
+- Provide actionable remediation guidance
+- Low false positive rate (<10%)
+        `.trim(),
+        decisionDrivers: [
+            'Language support (Java, Python, JS, TypeScript)',
+            'Detection accuracy (>90% true positive rate)',
+            'CI/CD integration',
+            'Scan time (<5 minutes for medium codebase)',
+            'Developer experience'
+        ],
+        options: [
+            {
+                name: 'SonarQube',
+                description: 'Open-source code quality and security platform',
+                pros: [
+                    'Free Community Edition',
+                    'Multi-language support (25+)',
+                    'IDE integration',
+                    'Quality gates in CI/CD',
+                    'Active community'
+                ],
+                cons: [
+                    'Limited security rules in free version',
+                    'Higher false positives',
+                    'Requires infrastructure',
+                    'Less deep security analysis'
+                ],
+                cost: 'low',
+                complexity: 'medium',
+                riskLevel: 'medium',
+                score: 75
+            },
+            {
+                name: 'Checkmarx SAST',
+                description: 'Enterprise-grade commercial SAST tool',
+                pros: [
+                    'Deep dataflow analysis',
+                    'Low false positive rate',
+                    'Comprehensive language support',
+                    'Developer training modules',
+                    'Compliance reporting'
+                ],
+                cons: [
+                    'High licensing cost',
+                    'Slower scan times',
+                    'Complex setup',
+                    'Steep learning curve'
+                ],
+                cost: 'high',
+                complexity: 'high',
+                riskLevel: 'low',
+                score: 85
+            },
+            {
+                name: 'Semgrep',
+                description: 'Lightweight static analysis with custom rules',
+                pros: [
+                    'Fast scan times (<2 min)',
+                    'Custom rule authoring',
+                    'CI-native design',
+                    'Free tier available',
+                    'Low false positives'
+                ],
+                cons: [
+                    'Limited inter-procedural analysis',
+                    'Smaller rule library',
+                    'Less enterprise features',
+                    'Manual rule tuning needed'
+                ],
+                cost: 'low',
+                complexity: 'low',
+                riskLevel: 'medium',
+                score: 90
+            }
+        ],
+        decision: `
+**Selected: Semgrep for CI/CD + SonarQube for Quality Gates**
+
+Use Semgrep for fast security-focused scans in PR pipeline (<2 min).
+Use SonarQube for comprehensive quality + security gates on merge.
+        `.trim(),
+        consequences: [
+            {
+                type: 'positive',
+                description: 'Fast feedback loop for developers',
+                impactArea: 'maintainability',
+                severity: 'high'
+            },
+            {
+                type: 'positive',
+                description: 'Comprehensive coverage',
+                impactArea: 'security',
+                severity: 'high'
+            },
+            {
+                type: 'negative',
+                description: 'Two tools to maintain',
+                impactArea: 'cost',
+                severity: 'low'
+            }
+        ],
+        relatedDecisions: ['ADR-002'],
+        complianceImpact: ['OWASP SAMM (V-ST-1-A)', 'SOC2 (secure development)']
     };
 }

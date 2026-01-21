@@ -56,6 +56,15 @@ function generatePseudocodeContent(
     const isSignalProtocol = moduleName.includes('Signal') || cls.name.includes('Ratchet') || cls.name.includes('X3DH');
     const isMalwareAnalysis = moduleName.includes('Sandbox') || cls.name.includes('Malware') || cls.name.includes('IOC');
     const isBlockchain = moduleName.includes('Smart') || cls.name.includes('Contract') || cls.name.includes('Chain');
+    const isAppSec = moduleName.includes('SAST') || moduleName.includes('DAST') || moduleName.includes('Security') || 
+                     cls.name.includes('SAST') || cls.name.includes('DAST') || cls.name.includes('Analyzer') ||
+                     cls.name.includes('Scanner') || cls.name.includes('Dependency') || cls.name.includes('SCA');
+    const isMLAI = moduleName.includes('ML') || moduleName.includes('AI') || moduleName.includes('Model') ||
+                   cls.name.includes('Adversarial') || cls.name.includes('Training') || cls.name.includes('Inference');
+    const isNetworkSec = moduleName.includes('Network') || moduleName.includes('Packet') || moduleName.includes('IDS') ||
+                         cls.name.includes('IPS') || cls.name.includes('DPI') || cls.name.includes('Firewall');
+    const isWebSec = moduleName.includes('Web') || moduleName.includes('HTTP') || moduleName.includes('WAF') ||
+                     cls.name.includes('WAF') || cls.name.includes('CSRF') || cls.name.includes('XSS');
 
     if (isSignalProtocol) {
         return generateSignalProtocolPseudocode(cls, language);
@@ -63,6 +72,14 @@ function generatePseudocodeContent(
         return generateMalwareAnalysisPseudocode(cls, language);
     } else if (isBlockchain) {
         return generateBlockchainPseudocode(cls, language);
+    } else if (isAppSec) {
+        return generateAppSecPseudocode(cls, language);
+    } else if (isMLAI) {
+        return generateMLAIPseudocode(cls, language);
+    } else if (isNetworkSec) {
+        return generateNetworkSecPseudocode(cls, language);
+    } else if (isWebSec) {
+        return generateWebSecPseudocode(cls, language);
     }
 
     // Generic pseudocode
@@ -319,6 +336,328 @@ function generateBlockchainPseudocode(cls: ClassDefinition, language: string): s
     lines.push('    // - GAS OPTIMIZATION: Pack state variables, use events for logs');
     lines.push('}');
 
+    return lines.join('\n');
+}
+
+/**
+ * Application Security (AppSec) - SAST/DAST/Dependency Scanning
+ */
+function generateAppSecPseudocode(cls: ClassDefinition, language: string): string {
+    const lines: string[] = [];
+    
+    if (cls.name.includes('SAST') || cls.name.includes('CodeAnalyzer') || cls.name.includes('StaticAnalyzer')) {
+        lines.push(`// SAST Engine - Static Application Security Testing`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    analyzeSecurity(sourceCode: string): VulnerabilityReport {`);
+        lines.push(`        // STEP 1: Parse Abstract Syntax Tree (AST)`);
+        lines.push(`        //   - Use parser: tree-sitter, srcML, or language-specific parser`);
+        lines.push(`        //   - Build Control Flow Graph (CFG)`);
+        lines.push(`        //   - Build Data Flow Graph (DFG)`);
+        lines.push(`        //   - Extract symbols and identifiers`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Pattern Matching (Rule-based Detection)`);
+        lines.push(`        //   SQL Injection Detection:`);
+        lines.push(`        //   - Pattern: execute("SELECT * FROM users WHERE id=" + userInput)`);
+        lines.push(`        //   - Flag: Unsanitized concatenation in SQL query`);
+        lines.push(`        //   XSS Detection:`);
+        lines.push(`        //   - Pattern: innerHTML = userInput`);
+        lines.push(`        //   - Flag: Unencoded output to DOM`);
+        lines.push(`        //   Hardcoded Secrets:`);
+        lines.push(`        //   - Regex: /api[_-]?key\\s*=\\s*['"][a-zA-Z0-9]{20,}['"]/`);
+        lines.push(`        //   - Flag: API keys, passwords in source code`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Data Flow Analysis (Taint Analysis)`);
+        lines.push(`        //   Source: User input (req.body, req.query, req.params)`);
+        lines.push(`        //   Sink: Dangerous functions (eval, exec, SQL query, file write)`);
+        lines.push(`        //   Propagation: Track tainted data through assignments`);
+        lines.push(`        //   Sanitizers: Check if input passes through validation/encoding`);
+        lines.push(`        //   Example: userInput -> sanitize() -> query [SAFE]`);
+        lines.push(``);
+        lines.push(`        // STEP 4: Control Flow Analysis`);
+        lines.push(`        //   - Detect unreachable code (dead code)`);
+        lines.push(`        //   - Identify missing security checks (auth bypass)`);
+        lines.push(`        //   - Check for race conditions (TOCTOU)`);
+        lines.push(``);
+        lines.push(`        // STEP 5: Generate Findings`);
+        lines.push(`        //   - CWE classification (CWE-89 for SQLi, CWE-79 for XSS)`);
+        lines.push(`        //   - Severity scoring (Critical/High/Medium/Low or CVSS)`);
+        lines.push(`        //   - Remediation advice with code snippets`);
+        lines.push(`        //   - Line number and context (5 lines before/after)`);
+        lines.push(``);
+        lines.push(`        // RETURN: List of vulnerabilities with context`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    } else if (cls.name.includes('DAST') || cls.name.includes('DynamicScanner')) {
+        lines.push(`// DAST Engine - Dynamic Application Security Testing`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    scanRunningApplication(targetUrl: string): VulnerabilityReport {`);
+        lines.push(`        // STEP 1: Crawl Application`);
+        lines.push(`        //   - Spider: Discover all endpoints, forms, parameters`);
+        lines.push(`        //   - Parse HTML, JavaScript for hidden endpoints`);
+        lines.push(`        //   - Respect robots.txt (configurable)`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Attack Vector Generation`);
+        lines.push(`        //   SQL Injection: ' OR 1=1--, '; DROP TABLE--, UNION SELECT`);
+        lines.push(`        //   XSS: <script>alert(1)</script>, <img src=x onerror=alert(1)>`);
+        lines.push(`        //   Path Traversal: ../../../etc/passwd`);
+        lines.push(`        //   SSRF: http://localhost:8080/admin`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Inject Payloads`);
+        lines.push(`        //   - Test each parameter with attack vectors`);
+        lines.push(`        //   - Monitor HTTP responses for evidence:`);
+        lines.push(`        //     • SQL errors in response (database detection)`);
+        lines.push(`        //     • Reflected payload in response (XSS)`);
+        lines.push(`        //     • Timing delays (blind SQLi with SLEEP())`);
+        lines.push(``);
+        lines.push(`        // STEP 4: Verify Vulnerabilities`);
+        lines.push(`        //   - Reduce false positives via confirmation tests`);
+        lines.push(`        //   - Extract data to prove exploitability`);
+        lines.push(``);
+        lines.push(`        // STEP 5: Generate Report`);
+        lines.push(`        //   - OWASP Top 10 classification`);
+        lines.push(`        //   - Proof-of-concept (HTTP request/response)`);
+        lines.push(`        //   - Remediation guidance`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    } else if (cls.name.includes('Dependency') || cls.name.includes('SCA')) {
+        lines.push(`// SCA Engine - Software Composition Analysis`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    scanDependencies(projectPath: string): VulnerabilityReport {`);
+        lines.push(`        // STEP 1: Extract Dependencies`);
+        lines.push(`        //   - Parse package.json, requirements.txt, pom.xml, Cargo.toml`);
+        lines.push(`        //   - Build dependency tree (direct + transitive)`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Query Vulnerability Databases`);
+        lines.push(`        //   - NVD (National Vulnerability Database)`);
+        lines.push(`        //   - OSV (Open Source Vulnerabilities)`);
+        lines.push(`        //   - GitHub Advisory Database`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Check for Known CVEs`);
+        lines.push(`        //   - Match package@version with CVE records`);
+        lines.push(`        //   - Check CVSS score and exploitability`);
+        lines.push(``);
+        lines.push(`        // STEP 4: License Compliance Check`);
+        lines.push(`        //   - Identify licenses (MIT, GPL, Apache, proprietary)`);
+        lines.push(`        //   - Flag incompatible licenses (GPL in closed-source)`);
+        lines.push(``);
+        lines.push(`        // STEP 5: Generate Remediation Plan`);
+        lines.push(`        //   - Recommend version upgrades`);
+        lines.push(`        //   - Suggest alternative packages if no fix available`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    }
+    
+    return lines.join('\n');
+}
+
+/**
+ * ML/AI Security - Adversarial Defense, Model Robustness
+ */
+function generateMLAIPseudocode(cls: ClassDefinition, language: string): string {
+    const lines: string[] = [];
+    
+    if (cls.name.includes('Adversarial') || cls.name.includes('Defense') || cls.name.includes('RobustModel')) {
+        lines.push(`// AI/ML Security - Adversarial Training & Defense`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    trainRobustModel(dataset: Dataset, baseModel: Model): RobustModel {`);
+        lines.push(`        // STEP 1: Data Sanitization (Anti-Poisoning)`);
+        lines.push(`        //   - Detect outliers using Isolation Forest`);
+        lines.push(`        //   - Remove adversarial samples (high loss on validation set)`);
+        lines.push(`        //   - Apply differential privacy: DP-SGD (add noise to gradients)`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Adversarial Training Loop`);
+        lines.push(`        //   FOR each epoch:`);
+        lines.push(`        //     - Generate adversarial examples:`);
+        lines.push(`        //       • FGSM: x_adv = x + ε * sign(∇_x Loss)`);
+        lines.push(`        //       • PGD: Iterative FGSM with projection`);
+        lines.push(`        //       • CW Attack: Minimize ||x - x_adv|| + c * L(x_adv)`);
+        lines.push(`        //     - Mix clean + adversarial samples (50/50 ratio)`);
+        lines.push(`        //     - Train model on mixed batch`);
+        lines.push(`        //     - Adversarial examples force model to learn robust features`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Model Inversion Defense`);
+        lines.push(`        //   - Add output noise (Laplace mechanism)`);
+        lines.push(`        //   - Limit prediction confidence (temperature scaling)`);
+        lines.push(`        //   - Prevent attackers from reconstructing training data`);
+        lines.push(``);
+        lines.push(`        // STEP 4: Membership Inference Defense`);
+        lines.push(`        //   - Use dropout at inference time (stochastic predictions)`);
+        lines.push(`        //   - Regularization: L2 penalty, weight decay`);
+        lines.push(`        //   - Prevent attackers from determining if sample was in training set`);
+        lines.push(``);
+        lines.push(`        // STEP 5: Robustness Evaluation`);
+        lines.push(`        //   - Test against white-box attacks (PGD-40 with ε=8/255)`);
+        lines.push(`        //   - Measure certified robustness (randomized smoothing)`);
+        lines.push(`        //   - Report: Clean accuracy vs Adversarial accuracy`);
+        lines.push(``);
+        lines.push(`        // RETURN: Hardened model`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    } else if (cls.name.includes('ModelServing') || cls.name.includes('Inference')) {
+        lines.push(`// ML Model Serving with Security Controls`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    predictSecure(input: Tensor): Prediction {`);
+        lines.push(`        // STEP 1: Input Validation`);
+        lines.push(`        //   - Check input shape, dtype, range`);
+        lines.push(`        //   - Detect adversarial perturbations (statistical tests)`);
+        lines.push(`        //   - Reject inputs with high entropy or unusual patterns`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Inference with Defense`);
+        lines.push(`        //   - Apply input transformation (JPEG compression, bit depth reduction)`);
+        lines.push(`        //   - Use ensemble of models (majority vote)`);
+        lines.push(`        //   - Run model with dropout enabled (uncertainty estimation)`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Output Sanitization`);
+        lines.push(`        //   - Clip confidence scores (prevent overconfidence)`);
+        lines.push(`        //   - Add calibrated uncertainty estimates`);
+        lines.push(`        //   - Redact sensitive predictions if confidence < threshold`);
+        lines.push(``);
+        lines.push(`        // STEP 4: Logging & Monitoring`);
+        lines.push(`        //   - Log prediction confidence distribution`);
+        lines.push(`        //   - Alert on suspicious patterns (drift detection)`);
+        lines.push(`        //   - Track model performance over time`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    }
+    
+    return lines.join('\n');
+}
+
+/**
+ * Network Security - IDS/IPS, Packet Analysis
+ */
+function generateNetworkSecPseudocode(cls: ClassDefinition, language: string): string {
+    const lines: string[] = [];
+    
+    if (cls.name.includes('IDS') || cls.name.includes('IPS') || cls.name.includes('PacketAnalyzer')) {
+        lines.push(`// Network IDS/IPS - Intrusion Detection/Prevention System`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    analyzeTraffic(packet: NetworkPacket): ThreatAssessment {`);
+        lines.push(`        // STEP 1: Packet Capture & Parsing`);
+        lines.push(`        //   - Capture via libpcap, AF_PACKET (Linux)`);
+        lines.push(`        //   - Parse headers: Ethernet → IP → TCP/UDP → Application`);
+        lines.push(`        //   - Extract 5-tuple: (src_ip, dst_ip, src_port, dst_port, protocol)`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Signature-Based Detection (Snort rules)`);
+        lines.push(`        //   - Match against known attack signatures:`);
+        lines.push(`        //     • Port scan: SYN to multiple ports in short time`);
+        lines.push(`        //     • SQL injection: HTTP payload contains "UNION SELECT"`);
+        lines.push(`        //     • Malware C2: Known C2 server IPs/domains`);
+        lines.push(`        //   - Use Boyer-Moore for fast string matching`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Anomaly-Based Detection (ML models)`);
+        lines.push(`        //   - Extract features: packet size, inter-arrival time, flags`);
+        lines.push(`        //   - Compare to baseline (trained on normal traffic)`);
+        lines.push(`        //   - Detect: DDoS (traffic spike), data exfiltration (large outbound)`);
+        lines.push(``);
+        lines.push(`        // STEP 4: Protocol Analysis`);
+        lines.push(`        //   - Verify protocol compliance (malformed packets)`);
+        lines.push(`        //   - Detect protocol abuse (HTTP smuggling, fragmentation attacks)`);
+        lines.push(``);
+        lines.push(`        // STEP 5: Action Decision (IPS only)`);
+        lines.push(`        //   - If threat detected:`);
+        lines.push(`        //     • Log alert (severity, timestamp, packet details)`);
+        lines.push(`        //     • DROP packet (IPS mode)`);
+        lines.push(`        //     • Update firewall rules (block source IP)`);
+        lines.push(`        //     • Alert SOC team`);
+        lines.push(``);
+        lines.push(`        // RETURN: Threat assessment and action taken`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    } else if (cls.name.includes('DPI') || cls.name.includes('DeepPacket')) {
+        lines.push(`// Deep Packet Inspection - Application Layer Analysis`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    inspectApplicationLayer(packet: NetworkPacket): ApplicationData {`);
+        lines.push(`        // STEP 1: Reconstruct TCP Stream`);
+        lines.push(`        //   - Reassemble fragmented packets`);
+        lines.push(`        //   - Handle out-of-order delivery`);
+        lines.push(`        //   - Track sequence numbers`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Protocol Detection`);
+        lines.push(`        //   - Identify application protocol (HTTP, DNS, SSH, TLS)`);
+        lines.push(`        //   - Use port number + payload heuristics`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Extract Application Data`);
+        lines.push(`        //   HTTP: URLs, headers, POST data`);
+        lines.push(`        //   DNS: Queried domains, resolved IPs`);
+        lines.push(`        //   TLS: SNI (Server Name Indication), certificate`);
+        lines.push(``);
+        lines.push(`        // STEP 4: Content Inspection`);
+        lines.push(`        //   - Scan for malware signatures`);
+        lines.push(`        //   - Data loss prevention (DLP): detect PII, credit cards`);
+        lines.push(`        //   - Policy enforcement: block file types, URLs`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    }
+    
+    return lines.join('\n');
+}
+
+/**
+ * Web Security - WAF, Bot Detection
+ */
+function generateWebSecPseudocode(cls: ClassDefinition, language: string): string {
+    const lines: string[] = [];
+    
+    if (cls.name.includes('WAF') || cls.name.includes('WebFirewall')) {
+        lines.push(`// Web Application Firewall - HTTP Traffic Filtering`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    filterHttpRequest(request: HttpRequest): FilterDecision {`);
+        lines.push(`        // STEP 1: Rate Limiting`);
+        lines.push(`        //   - Track requests per IP using sliding window (Redis)`);
+        lines.push(`        //   - Limit: 100 requests per minute per IP`);
+        lines.push(`        //   - Exponential backoff for repeat offenders`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Signature-Based Filtering (ModSecurity rules)`);
+        lines.push(`        //   SQL Injection:`);
+        lines.push(`        //   - Pattern: (UNION|SELECT|DROP|INSERT|UPDATE|DELETE).*FROM`);
+        lines.push(`        //   XSS:`);
+        lines.push(`        //   - Pattern: <script|javascript:|onerror=|onload=`);
+        lines.push(`        //   Path Traversal:`);
+        lines.push(`        //   - Pattern: \\.\\./|\\.\\.\\\\ in URL path`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Semantic Analysis`);
+        lines.push(`        //   - Parse request as SQL/HTML/JavaScript`);
+        lines.push(`        //   - Detect syntactically valid but malicious payloads`);
+        lines.push(`        //   - Example: Encoded payloads, polyglot attacks`);
+        lines.push(``);
+        lines.push(`        // STEP 4: Bot Detection`);
+        lines.push(`        //   - Check User-Agent header (known bot signatures)`);
+        lines.push(`        //   - JavaScript challenge (render page, execute JS)`);
+        lines.push(`        //   - CAPTCHA for suspicious traffic`);
+        lines.push(`        //   - Behavioral analysis: Mouse movements, typing patterns`);
+        lines.push(``);
+        lines.push(`        // STEP 5: Geo-Blocking & IP Reputation`);
+        lines.push(`        //   - Check source IP against threat intelligence feeds`);
+        lines.push(`        //   - Block requests from high-risk countries (configurable)`);
+        lines.push(`        //   - Allow whitelist IPs to bypass checks`);
+        lines.push(``);
+        lines.push(`        // RETURN: ALLOW, BLOCK, or CHALLENGE`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    } else if (cls.name.includes('CSRF') || cls.name.includes('TokenValidator')) {
+        lines.push(`// CSRF Protection - Token-Based Validation`);
+        lines.push(`class ${cls.name} {`);
+        lines.push(`    validateCSRFToken(request: HttpRequest): boolean {`);
+        lines.push(`        // STEP 1: Extract Token from Request`);
+        lines.push(`        //   - Check header: X-CSRF-Token`);
+        lines.push(`        //   - Check POST parameter: csrf_token`);
+        lines.push(``);
+        lines.push(`        // STEP 2: Verify Token Signature`);
+        lines.push(`        //   - HMAC-SHA256(user_session_id + timestamp, secret_key)`);
+        lines.push(`        //   - Prevents token forgery`);
+        lines.push(``);
+        lines.push(`        // STEP 3: Check Token Expiry`);
+        lines.push(`        //   - Tokens valid for 1 hour`);
+        lines.push(`        //   - Reject expired tokens`);
+        lines.push(``);
+        lines.push(`        // STEP 4: One-Time Use Validation`);
+        lines.push(`        //   - Mark token as used in Redis`);
+        lines.push(`        //   - Reject duplicate tokens (replay attacks)`);
+        lines.push(`    }`);
+        lines.push(`}`);
+    }
+    
     return lines.join('\n');
 }
 

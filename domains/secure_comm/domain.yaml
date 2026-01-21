@@ -50,3 +50,96 @@ dataClassification:
     - "Public Keys"
   low:
     - "Public Profiles"
+
+domain_specific_requirements:
+  - "MUST use X3DH (Extended Triple Diffie-Hellman) for initial key agreement"
+  - "MUST implement Double Ratchet algorithm for forward/future secrecy"
+  - "MUST use ChaCha20-Poly1305 or AES-256-GCM for message encryption"
+  - "MUST support asynchronous messaging via PreKey bundles"
+  - "MUST implement safety numbers for identity verification"
+  - "MUST delete message keys after successful decryption"
+  - "SHOULD support multi-device per user (Sesame protocol)"
+
+technical_constraints:
+  - type: "latency"
+    description: "Message encryption/decryption must complete within 50ms"
+    threshold: "<50ms p95"
+  - type: "performance"
+    description: "Real-time key ratcheting overhead"
+    threshold: "<10ms per message"
+  - type: "scale"
+    description: "Support millions of concurrent encrypted sessions"
+    threshold: "10M+ sessions"
+  - type: "availability"
+    description: "PreKey server uptime"
+    threshold: "99.99% SLA"
+
+recommended_tech_stack:
+  languages:
+    - "rust"
+    - "cpp"
+    - "go"
+  frameworks:
+    - "libsignal-protocol-rust"
+    - "libsodium"
+    - "openssl"
+  libraries:
+    - "curve25519-dalek"
+    - "ed25519-dalek"
+    - "chacha20poly1305"
+    - "hkdf"
+  deployment:
+    - "kubernetes"
+    - "docker"
+    - "nginx"
+
+data_flows:
+  - name: "Message Encryption Flow"
+    description: "End-to-end message encryption using Double Ratchet"
+    steps:
+      - "Sender fetches recipient's PreKey bundle (if first message)"
+      - "Sender performs X3DH key agreement to establish session"
+      - "Sender initializes Double Ratchet with shared secret"
+      - "Sender encrypts message with ChaCha20-Poly1305"
+      - "Sender advances symmetric-key ratchet (derives new chain key)"
+      - "Sender sends ciphertext + ratchet public key"
+      - "Recipient receives message and advances DH ratchet"
+      - "Recipient decrypts message with derived message key"
+      - "Recipient deletes message key after successful decryption"
+    security_controls:
+      - "Forward secrecy via ephemeral keys"
+      - "Authentication via HMAC"
+      - "Integrity via Poly1305 MAC"
+      - "Key deletion policy"
+      
+  - name: "PreKey Distribution Flow"
+    description: "Distribute public key bundles for asynchronous messaging"
+    steps:
+      - "Client generates identity key pair (long-term)"
+      - "Client generates signed PreKey (rotated monthly)"
+      - "Client generates batch of one-time PreKeys (100+)"
+      - "Client uploads PreKey bundle to server via mTLS"
+      - "Server stores PreKey bundle in database"
+      - "Sender fetches PreKey bundle when initiating conversation"
+      - "Server marks one-time PreKey as used (single-use)"
+    security_controls:
+      - "mTLS for API authentication"
+      - "Signed PreKeys prevent tampering"
+      - "One-time PreKeys prevent replay attacks"
+
+integration_points:
+  external_apis:
+    - name: "PreKey Server API"
+      protocol: "REST over HTTPS"
+      auth: "mTLS (mutual TLS)"
+      purpose: "Distribute public key bundles"
+    - name: "Message Relay Server"
+      protocol: "WebSocket over WSS"
+      auth: "JWT bearer tokens"
+      purpose: "Relay encrypted messages"
+  message_queues:
+    - "RabbitMQ for offline message delivery"
+    - "Redis Pub/Sub for online presence"
+  databases:
+    - "PostgreSQL for user accounts and PreKey storage"
+    - "Redis for session management"

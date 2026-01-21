@@ -13,7 +13,7 @@
     },
     "include": [
         "src/**/*"
-, "bin/test-diagrams.ts", "bin/test-domain-improvements.ts"    ],
+, "bin/quick-validation.ts", "bin/test-integration.ts"    ],
     "exclude": [
         "node_modules",
         "dist"

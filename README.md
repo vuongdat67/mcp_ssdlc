@@ -20,7 +20,7 @@ An intelligent, domain-aware Security Software Development Life Cycle (SSDLC) to
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/your-repo/mcp-ssdlc-toolkit.git
+    git clone https://github.com/vuongdat67/mcp_ssdlc
     cd mcp-ssdlc-toolkit
     ```
 

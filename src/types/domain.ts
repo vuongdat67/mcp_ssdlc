@@ -8,6 +8,12 @@ export interface Domain {
     stakeholders: Stakeholder[];
     sensitiveData: SensitiveData[];
     dataClassification: DataClassification;
+    // Extended schema (optional)
+    domain_specific_requirements?: any[];
+    technical_constraints?: any;
+    recommended_tech_stack?: any;
+    data_flows?: any[];
+    integration_points?: any[];
 }
 
 export interface Stakeholder {
